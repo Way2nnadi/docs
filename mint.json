@@ -1,85 +1,165 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Pipevest API",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#583CD1",
+    "light": "#583CD1",
+    "dark": "#583CD1",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#583CD1",
+      "to": "#D12C2C"
     }
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:hello@pipevest.com"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Request Access",
+    "url": "https://pipevest.com"
   },
   "tabs": [
     {
+      "name": "Guides",
+      "url": "guides"
+    },
+    {
       "name": "API Reference",
       "url": "api-reference"
-    }
-  ],
-  "anchors": [
-    {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Changelog",
+      "url": "changelog"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Welcome",
+      "pages": ["introduction", "get-started"]
+    },
+    {
+      "group": "Concepts",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "concepts/authentication",
+        "concepts/cryptographic-keys",
+        "concepts/http-signatures",
+        "concepts/idempotency",
+        "concepts/pagination",
+        "concepts/security",
+        "concepts/rate-limits",
+        "concepts/webhooks"
       ]
     },
     {
-      "group": "Essentials",
-      "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
-      ]
+      "group": "",
+      "pages": ["changelog/api"]
     },
     {
-      "group": "API Documentation",
-      "pages": [
-        "api-reference/introduction"
-      ]
+      "group": "",
+      "pages": ["guides/code"]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "API Reference",
+      "pages": ["api-reference/authentication"]
+    },
+    {
+      "group": "Endpoints",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        {
+          "group": "Authentication",
+          "pages": ["api-reference/endpoint/authentication/create"]
+        },
+        {
+          "group": "Customers",
+          "pages": [
+            "api-reference/endpoint/customers/get",
+            "api-reference/endpoint/customers/getById",
+            "api-reference/endpoint/customers/create"
+          ]
+        },
+        {
+          "group": "Accounts",
+          "pages": [
+            "api-reference/endpoint/accounts/get",
+            "api-reference/endpoint/accounts/getById",
+            "api-reference/endpoint/accounts/create",
+            "api-reference/endpoint/accounts/update"
+          ]
+        },
+        {
+          "group": "Investment Types",
+          "pages": [
+            "api-reference/endpoint/investments/get",
+            "api-reference/endpoint/investments/getById"
+          ]
+        },
+        {
+          "group": "Instruments",
+          "pages": [
+            "api-reference/endpoint/instruments/get",
+            "api-reference/endpoint/instruments/getBySymbol"
+          ]
+        },
+        {
+          "group": "Requests",
+          "pages": [
+            "api-reference/endpoint/requests/get",
+            "api-reference/endpoint/requests/getById",
+            "api-reference/endpoint/requests/createPurchase",
+            "api-reference/endpoint/requests/createSell",
+            "api-reference/endpoint/requests/update"
+          ]
+        },
+        {
+          "group": "Assets",
+          "pages": [
+            "api-reference/endpoint/assets/get",
+            "api-reference/endpoint/assets/getById",
+            "api-reference/endpoint/assets/create"
+          ]
+        },
+        {
+          "group": "Portfolio",
+          "pages": [
+            "api-reference/endpoint/portfolio/get",
+            "api-reference/endpoint/portfolio/getById",
+            "api-reference/endpoint/portfolio/create",
+            "api-reference/endpoint/portfolio/update"
+          ]
+        },
+        {
+          "group": "Transactions",
+          "pages": [
+            "api-reference/endpoint/transactions/get",
+            "api-reference/endpoint/transactions/getById"
+          ]
+        },
+        {
+          "group": "Market Data",
+          "pages": ["api-reference/endpoint/market-data/get"]
+        },
+        {
+          "group": "Reports",
+          "pages": [
+            "api-reference/endpoint/reports/getById",
+            "api-reference/endpoint/reports/create"
+          ]
+        },
+        {
+          "group": "Webhooks",
+          "pages": [
+            "api-reference/endpoint/webhooks/get",
+            "api-reference/endpoint/webhooks/create",
+            "api-reference/endpoint/webhooks/update"
+          ]
+        }
       ]
     }
   ],

@@ -1,0 +1,1993 @@
+openapi: 3.0.0
+info:
+  title: Pipevest Investment API
+  description: Connecting millions of Africans to the global economy
+  version: 0.0.1
+servers:
+  - url: http://api.pipevest.com/v1
+    description: Main (production) server
+security:
+  - ApiKeyAuth: []
+paths:
+  /accounts:
+    get:
+      tags:
+        - Accounts
+      summary: Returns a list of investment accounts.
+      parameters:
+        - name: customerId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/CustomerId"
+      responses:
+        "200":
+          description: A JSON array of investment accounts
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        description: An array containing investment accounts
+                        items:
+                          $ref: "#/components/schemas/Account"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Accounts
+      summary: Creates an investment account.
+      requestBody:
+        description: Details used to create an account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccount"
+      responses:
+        "200":
+          description: Details of a investment account
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Account"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Accounts
+      summary: Updates an investment account.
+      requestBody:
+        description: Details used to create an account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAccount"
+      responses:
+        "200":
+          description: Details of a investment account
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Account"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /accounts/{accountId}:
+    get:
+      tags:
+        - Accounts
+      summary: Returns a investment account.
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/AccountId"
+      responses:
+        "200":
+          description: Details of a investment account
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Account"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /assets:
+    get:
+      tags:
+        - Assets
+      summary: Returns list of assets for a given customer
+      parameters:
+        - name: customerId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/CustomerId"
+        - name: accountId
+          in: query
+          description: filter by accountId
+          schema:
+            $ref: "#/components/schemas/AccountId"
+        - name: portfolioId
+          in: query
+          description: filter by portfolioId
+          schema:
+            $ref: "#/components/schemas/PortfolioId"
+      responses:
+        "200":
+          description: A JSON array of customer assets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Asset"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Assets
+      summary: Adds an asset to a portfolio
+      requestBody:
+        description: Details used to add an asset to a portfolio
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePortofolioAsset"
+      responses:
+        "200":
+          description: A JSON array of customer assets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PortofolioAsset"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /assets/{assetId}:
+    get:
+      tags:
+        - Assets
+      summary: Returns an asset for a given customer
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/AssetId"
+      responses:
+        "200":
+          description: A customer asset
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Asset"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Returns an access token
+      requestBody:
+        description: Details used to create a customer within the system
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/CreateAuthToken"
+      responses:
+        "201":
+          description: Details of the access token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Auth"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /customers:
+    get:
+      tags:
+        - Customers
+      summary: Returns list of customers
+      responses:
+        "200":
+          description: A JSON array of customer details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Customers
+      summary: Creates a customer
+      requestBody:
+        description: Details used to create a customer within the system
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomer"
+      responses:
+        "201":
+          description: Details of a newly created customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Customers
+      summary: Updates a customer
+      requestBody:
+        description: Details used to update a customer within the system
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCustomer"
+      responses:
+        "200":
+          description: Details of an updated customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /customers/{customerId}:
+    get:
+      tags:
+        - Customers
+      summary: Returns a customer by Id
+      parameters:
+        - name: customerId
+          in: path
+          description: the customer unique id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details of a customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /instruments:
+    get:
+      tags:
+        - Instruments
+      summary: Returns a list of available instruments for a given investment option.
+      parameters:
+        - name: investmentType
+          in: query
+          description: the investment type
+          required: true
+          schema:
+            $ref: "#/components/schemas/InvestmentType"
+      responses:
+        "200":
+          description: A JSON array of investment instruments
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Instrument"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /instruments/{symbol}:
+    get:
+      tags:
+        - Instruments
+      summary: Returns details of a given instrument
+      parameters:
+        - name: symbol
+          in: path
+          description: A given instrument symbol
+          required: true
+          example: APPL
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Details of an investment instrument
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Instrument"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /investments:
+    get:
+      tags:
+        - Investments
+      summary: Returns a list of investment types.
+      responses:
+        "200":
+          description: A JSON array of investment types
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        description: An array containing investment types
+                        items:
+                          $ref: "#/components/schemas/InstrumentType"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /investments/{investmentId}:
+    get:
+      tags:
+        - Investments
+      summary: Returns an investment type
+      parameters:
+        - name: investmentId
+          in: path
+          description: the investment Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details of an investment type
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/InstrumentType"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /market/data:
+    get:
+      tags:
+        - Market Data
+      summary: Returns market data for an instrument
+      parameters:
+        - name: instrumentId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/InstrumentId"
+        - name: start
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/StartDate"
+        - name: end
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/EndDate"
+        - name: timeFrame
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/TimeFrame"
+      responses:
+        "200":
+          description: Market data for an instrument
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/MarketData"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /portfolio:
+    get:
+      tags:
+        - Portfolio
+      summary: Returns list of portfolios for a customer
+      parameters:
+        - name: customerId
+          in: query
+          description: the customer unique id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A JSON array of investment portfolios
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        description: |
+                          Portfolios with an `accountId` was automatically created by `Pipevest` with an associated account.
+
+                          Wherein there is no `accountId`, the Portfolio was manually created via the API and does not have an associated account.
+                        items:
+                          $ref: "#/components/schemas/Portfolio"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Portfolio
+      summary: Creates an investment portfolio
+      requestBody:
+        description: Details used to create a portfolio
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePortfolio"
+      responses:
+        "200":
+          description: Details of a investment portfolio
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Portfolio"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Requests
+      summary: Updates a portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePortfolio"
+      responses:
+        "200":
+          description: Details of a updated investment portfolio
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Portfolio"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /portfolio/{portfolioId}:
+    get:
+      tags:
+        - Portfolio
+      summary: Returns an investment portfolio
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/PortfolioId"
+      responses:
+        "200":
+          description: An Investment portfolio
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Portfolio"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /reports:
+    post:
+      tags:
+        - Reports
+      summary: Creates trigger to generate reports
+      requestBody:
+        description: Details used to create a reports trigger
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReport"
+      responses:
+        "200":
+          description: Details of a investment portfolio
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Report"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /reports/{reportId}:
+    get:
+      tags:
+        - Reports
+      summary: Return report details
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ReportId"
+      responses:
+        "200":
+          description: Report details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Report"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /requests:
+    get:
+      tags:
+        - Requests
+      summary: Returns list of instruments purchased and/or sold by a customer
+      parameters:
+        - name: customerId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/CustomerId"
+        - name: requestType
+          in: query
+          schema:
+            $ref: "#/components/schemas/RequestType"
+      responses:
+        "200":
+          description: A JSON array of customer instrument requests
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Request"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Requests
+      summary: Updates an instrument request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRequest"
+      responses:
+        "200":
+          description: Details of a updated customer asset request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Request"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /requests/{requestId}:
+    get:
+      tags:
+        - Requests
+      summary: Returns instrument request details by Id
+      parameters:
+        - name: requestId
+          in: path
+          description: the request id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deails of a customer instrument request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Request"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /requests/purchase:
+    post:
+      tags:
+        - Requests
+      summary: Creates an instrument purchase request
+      requestBody:
+        description: Details used to create a purchase request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRequestPurchase"
+      responses:
+        "201":
+          description: Details of a created customer instrument purchase request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/RequestPurchase"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /requests/sell:
+    post:
+      tags:
+        - Requests
+      summary: Creates an asset sell request
+      requestBody:
+        description: Details used to create a sell asset request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRequestSell"
+      responses:
+        "201":
+          description: Details of a created customer asset sell request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/RequestSell"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /transactions:
+    get:
+      tags:
+        - Transactions
+      summary: Returns list of transactions
+      parameters:
+        - name: customerId
+          in: query
+          description: the customer unique id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of customer transactions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Transaction"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Returns a transaction by a given Id
+      parameters:
+        - name: transactionId
+          in: path
+          description: the transaction id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details on a given transaction
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Transaction"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /webhooks:
+    get:
+      tags:
+        - Webhooks
+      summary: Webhook configuration
+      responses:
+        "200":
+          description: Webhook configuration
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Webhooks
+      summary: Creates an webhook configuration
+      requestBody:
+        description: Details used to create a webhook config
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebhook"
+      responses:
+        "201":
+          description: Details of a created customer asset request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Webhooks
+      summary: Updates an webhook configuration
+      requestBody:
+        description: Details used to update a webhook config
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebhook"
+      responses:
+        "200":
+          description: Details of an update customer asset request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Webhook"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  responses:
+    OK:
+      description: The request succeeded
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Success"
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Error"
+              - type: object
+                properties:
+                  code:
+                    type: string
+                    example: 404
+                  message:
+                    type: string
+                    example: Not Found
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    # Entity Units
+    AccessToken:
+      description: Client shortlived access token
+      type: string
+      example: 01937261-e216-754f-99ba-c1170d65dd28
+    AccessTokenExpiresIn:
+      description: A token's current time to live(TTL)
+      type: integer
+      example: 123
+    AccessTokenMaxTTL:
+      description: A token's max time to live(TTL)
+      type: integer
+      example: 123
+    AccessTokenType:
+      description: A token's authorization type
+      type: string
+      example: Bearer
+    AccessTokenScope:
+      description: The authorization scopes associated with token
+      enum: [ALL.READ, ALL.WRITE]
+      example: [ALL.READ, ALL.WRITE]
+    AccountId:
+      description: Unique account identifier
+      type: integer
+      example: 123456
+    AccountStatus:
+      description: Current status of the account
+      enum: [ACTIVE, SUSPENDED, CLOSED]
+      example: ACTIVE
+    AssetId:
+      description: Unique asset identifier
+      type: integer
+      example: 123456
+    AssetName:
+      description: The display name of the asset
+      type: string
+      example: Apple Inc.
+    AssetSymbol:
+      description: The symbol associated by the asset
+      type: string
+      example: APPL
+    AvailablePosition:
+      description: The quantity of the asset currently available for trading.
+      type: integer
+      example: 5
+    CancelRequest:
+      description: Determine whether to cancel a request
+      type: boolean
+      example: true
+    ClientId:
+      description: Unique identifier assigned to the client
+      type: string
+      example: client-id
+    ClientSecret:
+      description: Private passcode shared with the client
+      type: string
+      example: client-secret
+    CreatedAt:
+      description: Created at unix timestamp
+      type: integer
+      example: 1234567890
+    Currency:
+      description: Associated currency
+      enum: [USD, EUR, ZK]
+      example: ZK
+    CustomerId:
+      description: Unique customer identifier
+      type: integer
+      example: 123456
+    Email:
+      description: A valid email
+      type: string
+      example: reports@companyx.com
+    EndDate:
+      description: Market data end date as UNIX timestamp
+      type: integer
+      example: 1234567890
+    FirstName:
+      description: The customers first name
+      type: string
+      example: John
+    FractionalEnabled:
+      description: determines whether the instrument can be traded fractionally
+      type: boolean
+      example: true
+    InstrumentId:
+      description: Unique instrument identifier
+      type: integer
+      example: 123456
+    InstrumentOpen:
+      description: Instrument opening trade value
+      type: integer
+      example: 500.00
+    InstrumentHigh:
+      description: Instrument highest trade value
+      type: integer
+      example: 1000.00
+    InstrumentLow:
+      description: Instrument lowest trade value
+      type: integer
+      example: 200.00
+    InstrumentClose:
+      description: Instrument closing trade value
+      type: integer
+      example: 200.00
+    InstrumentVolume:
+      description: Instrument trade volume
+      type: integer
+      example: 200.00
+    InvestmentAmount:
+      description: The total amount invested into an asset or group of assets
+      type: integer
+      example: 1550.00
+    InvestmentId:
+      description: Unique investment identifier
+      type: integer
+      example: 123456
+    InvestmentType:
+      description: |
+        Investment type associated with the account
+
+        Currently only `INTERNATIONAL_STOCKS` is available
+        More options will be available in the near future
+
+        Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `BONDS`]
+      type: string
+      enum: [INTERNATIONAL_STOCKS]
+      example: INTERNATIONAL_STOCKS
+    IsAvailable:
+      description: Determines whether the instrument is available for trading
+      type: boolean
+      example: true
+    IsRecurring:
+      description: |
+        Determines whether the request should be made recurringly
+
+        Defaults to `false`
+
+        Refer to [Requests documentation](https://docs.pipevest.com) to better understand how recurring works
+      type: boolean
+      example: false
+    LastName:
+      description: The customers first name
+      type: string
+      example: Knox
+    LockedPosition:
+      description: The quantity of the asset currently locked in for trading.
+      type: integer
+      example: 5
+    MarketDataId:
+      description: Unique market data identifier
+      type: integer
+      example: 123456
+    MarketPrice:
+      description: The current market price of 1 unit of the asset
+      type: integer
+      example: 550.00
+    MarketValue:
+      description: The current market value of an asset or group of assets
+      type: integer
+      example: 11550.00
+    PercentChange:
+      description: The change percent change
+      type: integer
+      example: 1.5
+    Performance:
+      description: |
+        The performance of all the assets under the portfolio.
+
+        This value is represented as a percentage increase or decrease over the lifetime of the portfolio
+      type: integer
+      example: 151.00
+    PortfolioId:
+      description: Unique portfolio identifier
+      type: integer
+      example: 123456
+    PortfolioStatus:
+      description: Current status of the portfolio
+      enum: [ACTIVE, CLOSED]
+      example: ACTIVE
+    Position:
+      description: The total quantity of the asset currently owned by the customer
+      type: integer
+      example: 10
+    PurchaseAmount:
+      description: The total purchase amount for an asset or group of assets
+      type: integer
+      example: 1550.00
+    PurchasePrice:
+      description: The value of 1 unit of the asset during initial purchase
+      type: integer
+      example: 500.00
+    ReferenceId:
+      description: Externally provided unique identifier
+      type: integer
+      example: 123456
+    RequestId:
+      description: Unique request identifier
+      type: integer
+      example: 123456
+    RequestStatus:
+      description: The status of the request
+      enum: [PENDING, COMPLETE, CANCELED, NOT_COMPLETE]
+      example: PENDING
+    RequestType:
+      description: The type of request being made
+      enum: [SELL, PURCHASE]
+      example: PURCHASE
+    ReportId:
+      description: Unique report identifier
+      type: integer
+      example: 123456
+    ReportStatus:
+      description: Current status of the report
+      enum: [PROCESSING, COMPLETE, ERROR]
+      example: PROCESSING
+    ReportType:
+      description: The type of report
+      enum: [USER, TRANSACTION, REGULATORY]
+      example: REGULATORY
+    ReportTypes:
+      type: array
+      items:
+        $ref: "#/components/schemas/ReportType"
+    ResponseCode:
+      description: Request response code
+      type: string
+      example: 200
+    ResponseMessage:
+      description: Request response message
+      type: string
+      example: Success
+    SellAmount:
+      description: The total amount to sell from an asset or group of assets
+      type: integer
+      example: 1550.00
+    SellPercentage:
+      description: The percentage amount to sell
+      type: integer
+      example: 50.0
+    Schedule:
+      description: |
+        The schedule in which the asset should be purchased or sold in a recurring manner
+
+        Defaults to `ONCE`
+      enum: [ONCE, DAILY, WEEKLY, BI_WEEKLY, MONTHLY]
+      example: ONCE
+    StartDate:
+      description: Market data start date as UNIX timestamp
+      type: integer
+      example: 1234567890
+    TimeFrame:
+      description: The time frames used to determine instrument market data
+      enum: [1D, 5D, 3M, 6M, YTD, 1Y, 5Y, ALL]
+      example: 1D
+    TransactionAmount:
+      description: The amount for the transaction
+      type: integer
+      example: 500.00
+    TransactionId:
+      description: Unique transaction identifier
+      type: integer
+      example: 123456
+    TransactionStatus:
+      description: The status for the transaction
+      enum: [PENDING, COMPLETE]
+      example: COMPLETE
+    TrustedIpAddress:
+      description: An ip address whitelisted for this client
+      type: string
+      example: 123.123.123.123
+    TrustedIpAddresses:
+      description: The list of ip addresses whitelisted for this client
+      type: array
+      items:
+        $ref: "#/components/schemas/TrustedIpAddress"
+    UpdatedAt:
+      description: Updated at unix timestamp
+      type: integer
+      example: 1234567890
+    ValueChangeSummary:
+      description: Human readable summary for the instrument value change
+      type: string
+      example: Asset has changed by 1.5% over the past 1 day
+    WebhookId:
+      description: The unique webhook identifier
+      type: integer
+      example: 123456
+    WebhookStatus:
+      description: The status of the webhook
+      enum: [ACTIVE, IN_ACTIVE]
+      example: ACTIVE
+    WebhookSubscription:
+      description: A webhook subscription
+      enum:
+        [
+          ALL,
+          ACCOUNT,
+          ACCOUNT.CREATED,
+          ACCOUNT.UPDATED,
+          ASSET,
+          ASSET.CREATED,
+          ASSET.ADD_TO_PORTFOLIO,
+          ASSET.UPDATED,
+          CUSTOMER,
+          CUSTOMER.CREATED,
+          CUSTOMER.UPDATED,
+          INSTRUMENT,
+          INSTRUMENT.CREATED,
+          INSTRUMENT.UPDATED,
+          INVESTMENT,
+          INVESTMENT.CREATED,
+          INVESTMENT.UPDATED,
+          PORTFOLIO,
+          PORTFOLIO.CREATED,
+          PORTFOLIO.UPDATED,
+          REQUEST,
+          REQUEST.CREATED,
+          REQUEST.UPDATED,
+          REPORT,
+          TRANSACTION,
+        ]
+      example: ALL
+    WebhookSubscriptions:
+      type: array
+      description: |
+        Refer to [Webhook documentation](https://docs.pipevest.com) to understand how subscriptions work
+      items:
+        $ref: "#/components/schemas/WebhookSubscription"
+    WebhookUrl:
+      description: A valid url
+      type: string
+      example: https://companyx.com/webhooks
+
+    # Entity Components
+    Account:
+      type: object
+      description: A customer account
+      properties:
+        accountId:
+          $ref: "#/components/schemas/AccountId"
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        status:
+          $ref: "#/components/schemas/AccountStatus"
+        investmentType:
+          $ref: "#/components/schemas/InvestmentType"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - accountId
+        - customerId
+        - status
+        - investmentType
+        - currency
+        - createdAt
+        - updatedAt
+    Asset:
+      type: object
+      properties:
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        instrumentId:
+          $ref: "#/components/schemas/InstrumentId"
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        name:
+          $ref: "#/components/schemas/AssetName"
+        symbol:
+          $ref: "#/components/schemas/AssetSymbol"
+        investmentAmount:
+          $ref: "#/components/schemas/InvestmentAmount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        position:
+          $ref: "#/components/schemas/Position"
+        locked:
+          $ref: "#/components/schemas/LockedPosition"
+        available:
+          $ref: "#/components/schemas/AvailablePosition"
+        purchasePrice:
+          $ref: "#/components/schemas/PurchasePrice"
+        marketPrice:
+          $ref: "#/components/schemas/MarketPrice"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - assetId
+        - instrumentId
+        - customerId
+        - name
+        - symbol
+        - investmentAmount
+        - schedule
+        - position
+        - locked
+        - available
+        - purchasePrice
+        - marketPrice
+        - createdAt
+        - updatedAt
+    Auth:
+      type: object
+      description: Details of the authenticated token request
+      properties:
+        accessToken:
+          $ref: "#/components/schemas/AccessToken"
+        expiresIn:
+          $ref: "#/components/schemas/AccessTokenExpiresIn"
+        maxTTL:
+          $ref: "#/components/schemas/AccessTokenMaxTTL"
+        type:
+          $ref: "#/components/schemas/AccessTokenType"
+        scope:
+          $ref: "#/components/schemas/AccessTokenScope"
+        trustedIps:
+          $ref: "#/components/schemas/TrustedIpAddresses"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - accessToken
+        - expiresIn
+        - maxTTL
+        - type
+        - scope
+        - trustedIps
+        - createdAt
+        - updatedAt
+    CreateAccount:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        investmentTypes:
+          description: |
+            Defaults to `INTERNATIONAL_STOCKS` if no specified investment type
+
+            Currently only `INTERNATIONAL_STOCKS` is available
+            More options will be available in the near future
+
+            Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `BONDS`]
+          type: array
+          items:
+            $ref: "#/components/schemas/InvestmentType"
+      required:
+        - customerId
+        - currency
+    CreateAuthToken:
+      type: object
+      properties:
+        clientId:
+          $ref: "#/components/schemas/ClientId"
+        clientSecret:
+          $ref: "#/components/schemas/ClientSecret"
+      required:
+        - clientId
+        - clientSecret
+    CreateCustomer:
+      type: object
+      properties:
+        firstName:
+          $ref: "#/components/schemas/FirstName"
+        lastName:
+          $ref: "#/components/schemas/LastName"
+        referenceId:
+          $ref: "#/components/schemas/ReferenceId"
+      required:
+        - firstName
+        - lastName
+    CreatePortfolio:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        currency:
+          description: |
+            Currency associated with the Portfolio
+
+            Defaults to `USD`
+          $ref: "#/components/schemas/Currency"
+      required:
+        - customerId
+    CreatePortofolioAsset:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        portfolioId:
+          $ref: "#/components/schemas/PortfolioId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+      required:
+        - customerId
+        - portfolioId
+        - assetId
+    CreateReport:
+      type: object
+      description: |
+        Report Payload
+
+        Refer to [Report documentation](https://docs.pipevest.com) to understand how reports work
+      properties:
+        reportTypes:
+          $ref: "#/components/schemas/ReportTypes"
+        url:
+          $ref: "#/components/schemas/WebhookUrl"
+        email:
+          $ref: "#/components/schemas/Email"
+      required:
+        - reportTypes
+    CreateRequestPurchase:
+      type: object
+      description: Purchase Request Payload
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        instrumentId:
+          $ref: "#/components/schemas/InstrumentId"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        purchaseAmount:
+          $ref: "#/components/schemas/PurchaseAmount"
+        isRecurring:
+          $ref: "#/components/schemas/IsRecurring"
+        schedule:
+          $ref: "#/components/schemas/Schedule"
+      required:
+        - customerId
+        - instrumentId
+        - purchaseAmount
+        - currency
+    CreateRequestSell:
+      type: object
+      description: Sell Request Payload
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        sellAmount:
+          description: |
+            The total amount to sell from an asset or group of assets
+
+            Not requried, if `sellPercentage` is specified
+          $ref: "#/components/schemas/SellAmount"
+        sellPercentage:
+          description: |
+            The percentage amount to sell
+
+            Not requried, if `sellAmount` is specified
+          $ref: "#/components/schemas/SellPercentage"
+        isRecurring:
+          $ref: "#/components/schemas/IsRecurring"
+        schedule:
+          $ref: "#/components/schemas/Schedule"
+      required:
+        - customerId
+        - assetId
+        - currency
+    CreateWebhook:
+      type: object
+      properties:
+        url:
+          $ref: "#/components/schemas/WebhookUrl"
+        subscriptions:
+          $ref: "#/components/schemas/WebhookSubscriptions"
+      required:
+        - url
+        - subscriptions
+    Customer:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        firstName:
+          $ref: "#/components/schemas/FirstName"
+        lastName:
+          $ref: "#/components/schemas/LastName"
+        referenceId:
+          $ref: "#/components/schemas/ReferenceId"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - customerId
+        - firstName
+        - lastName
+        - referenceId
+        - createdAt
+        - updatedAt
+    Instrument:
+      type: object
+      properties:
+        instrumentId:
+          $ref: "#/components/schemas/InstrumentId"
+        name:
+          $ref: "#/components/schemas/AssetName"
+        symbol:
+          $ref: "#/components/schemas/AssetSymbol"
+        investmentId:
+          $ref: "#/components/schemas/InvestmentId"
+        isAvailable:
+          $ref: "#/components/schemas/IsAvailable"
+        valueChangeOverTime:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValueChange"
+        fractionalEnabled:
+          $ref: "#/components/schemas/FractionalEnabled"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - instrumentId
+        - name
+        - symbol
+        - investmentId
+        - isAvailable
+        - createdAt
+        - updatedAt
+    InstrumentType:
+      type: object
+      properties:
+        investmentId:
+          $ref: "#/components/schemas/InvestmentId"
+        investmentType:
+          $ref: "#/components/schemas/InvestmentType"
+        isAvailable:
+          $ref: "#/components/schemas/IsAvailable"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - investmentId
+        - investmentType
+        - isAvailable
+        - createdAt
+        - updatedAt
+    MarketData:
+      type: object
+      properties:
+        marketDataId:
+          $ref: "#/components/schemas/MarketDataId"
+        name:
+          $ref: "#/components/schemas/AssetName"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        symbol:
+          $ref: "#/components/schemas/AssetSymbol"
+        open:
+          $ref: "#/components/schemas/InstrumentOpen"
+        high:
+          $ref: "#/components/schemas/InstrumentHigh"
+        low:
+          $ref: "#/components/schemas/InstrumentLow"
+        close:
+          $ref: "#/components/schemas/InstrumentClose"
+        volume:
+          $ref: "#/components/schemas/InstrumentVolume"
+        start:
+          $ref: "#/components/schemas/StartDate"
+        end:
+          $ref: "#/components/schemas/EndDate"
+        timeFrame:
+          $ref: "#/components/schemas/TimeFrame"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+    Portfolio:
+      type: object
+      description: An investment portfolio
+      properties:
+        accountId:
+          $ref: "#/components/schemas/AccountId"
+        portfolioId:
+          $ref: "#/components/schemas/PortfolioId"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        investmentAmount:
+          $ref: "#/components/schemas/InvestmentAmount"
+        marketValue:
+          $ref: "#/components/schemas/MarketValue"
+        performance:
+          $ref: "#/components/schemas/Performance"
+        status:
+          $ref: "#/components/schemas/PortfolioStatus"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - portfolioId
+        - currency
+        - investmentAmount
+        - marketValue
+        - performance
+        - status
+        - createdAt
+        - updatedAt
+    PortofolioAsset:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        portfolioId:
+          $ref: "#/components/schemas/PortfolioId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - customerId
+        - portfolioId
+        - assetId
+        - createdAt
+        - updatedAt
+    Report:
+      type: object
+      properties:
+        reportId:
+          $ref: "#/components/schemas/ReportId"
+        reportTypes:
+          $ref: "#/components/schemas/ReportTypes"
+        status:
+          $ref: "#/components/schemas/ReportStatus"
+        url:
+          $ref: "#/components/schemas/WebhookUrl"
+        email:
+          $ref: "#/components/schemas/Email"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - reportId
+        - reportTypes
+        - createdAt
+        - updatedAt
+    Request:
+      anyOf:
+        - $ref: "#/components/schemas/RequestPurchase"
+        - $ref: "#/components/schemas/RequestSell"
+    RequestPurchase:
+      type: object
+      properties:
+        requestId:
+          $ref: "#/components/schemas/RequestId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        instrumentId:
+          $ref: "#/components/schemas/InstrumentId"
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        symbol:
+          $ref: "#/components/schemas/AssetSymbol"
+        requestType:
+          $ref: "#/components/schemas/RequestType"
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+        purchaseAmount:
+          $ref: "#/components/schemas/PurchaseAmount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        isRecurring:
+          $ref: "#/components/schemas/IsRecurring"
+        schedule:
+          $ref: "#/components/schemas/Schedule"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - requestId
+        - assetId
+        - instrumentId
+        - symbol
+        - requestType
+        - purchaseAmount
+        - status
+        - currency
+        - customerId
+        - isRecurring
+        - schedule
+        - createdAt
+        - updatedAt
+    RequestSell:
+      type: object
+      properties:
+        requestId:
+          $ref: "#/components/schemas/RequestId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        instrumentId:
+          $ref: "#/components/schemas/InstrumentId"
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        symbol:
+          $ref: "#/components/schemas/AssetSymbol"
+        requestType:
+          allOf:
+            - $ref: "#/components/schemas/RequestType"
+            - example: SELL
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        isRecurring:
+          $ref: "#/components/schemas/IsRecurring"
+        schedule:
+          $ref: "#/components/schemas/Schedule"
+        sellAmount:
+          $ref: "#/components/schemas/SellAmount"
+        sellPercentage:
+          $ref: "#/components/schemas/SellPercentage"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - requestId
+        - assetId
+        - instrumentId
+        - symbol
+        - requestType
+        - status
+        - currency
+        - customerId
+        - isRecurring
+        - schedule
+        - sellAmount
+        - sellPercentage
+        - createdAt
+        - updatedAt
+    Transaction:
+      type: object
+      properties:
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        assetId:
+          $ref: "#/components/schemas/AssetId"
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        amount:
+          $ref: "#/components/schemas/TransactionAmount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        requestType:
+          $ref: "#/components/schemas/RequestType"
+        status:
+          $ref: "#/components/schemas/TransactionStatus"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - transactionId
+        - assetId
+        - customerId
+        - amount
+        - currency
+        - symbol
+        - requestType
+        - status
+        - createdAt
+        - updatedAt
+    UpdateAccount:
+      type: object
+      properties:
+        accountId:
+          $ref: "#/components/schemas/AccountId"
+        status:
+          $ref: "#/components/schemas/AccountStatus"
+        investmentType:
+          $ref: "#/components/schemas/InvestmentType"
+        currency:
+          $ref: "#/components/schemas/Currency"
+      required:
+        - accountId
+    UpdateCustomer:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+        firstName:
+          $ref: "#/components/schemas/FirstName"
+        lastName:
+          $ref: "#/components/schemas/LastName"
+        referenceId:
+          $ref: "#/components/schemas/ReferenceId"
+      required:
+        - customerId
+    UpdatePortfolio:
+      type: object
+      properties:
+        accountId:
+          $ref: "#/components/schemas/AccountId"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        status:
+          $ref: "#/components/schemas/PortfolioStatus"
+      required:
+        - accountId
+    UpdateRequest:
+      type: object
+      properties:
+        requestId:
+          $ref: "#/components/schemas/RequestId"
+        shouldCancelRequest:
+          $ref: "#/components/schemas/CancelRequest"
+      required:
+        - requestId
+        - shouldCancelRequest
+    UpdateWebhook:
+      type: object
+      properties:
+        url:
+          $ref: "#/components/schemas/WebhookUrl"
+        subscriptions:
+          $ref: "#/components/schemas/WebhookSubscriptions"
+    ValueChange:
+      type: object
+      properties:
+        timeFrame:
+          $ref: "#/components/schemas/TimeFrame"
+        percentChange:
+          $ref: "#/components/schemas/PercentChange"
+        summary:
+          $ref: "#/components/schemas/ValueChangeSummary"
+      required:
+        - timeFrame
+        - percentChange
+        - summary
+    Webhook:
+      type: object
+      properties:
+        webhookId:
+          $ref: "#/components/schemas/WebhookId"
+        status:
+          $ref: "#/components/schemas/WebhookStatus"
+        url:
+          $ref: "#/components/schemas/WebhookUrl"
+        subscriptions:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebhookSubscription"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+
+    # Response Components
+    Created:
+      allOf:
+        - $ref: "#/components/schemas/Success"
+        - type: object
+          properties:
+            code:
+              allOf:
+                - $ref: "#/components/schemas/ResponseCode"
+                - example: 201
+            message:
+              allOf:
+                - $ref: "#/components/schemas/ResponseMessage"
+                - example: Created
+    Error:
+      type: object
+      properties:
+        code:
+          allOf:
+            - $ref: "#/components/schemas/ResponseCode"
+            - example: 401
+        message:
+          allOf:
+            - $ref: "#/components/schemas/ResponseMessage"
+            - example: Unauthorized
+      required:
+        - code
+        - message
+    Success:
+      type: object
+      properties:
+        data:
+          oneOf:
+            - type: object
+            - type: array
+        code:
+          $ref: "#/components/schemas/ResponseCode"
+        message:
+          $ref: "#/components/schemas/ResponseMessage"
+      required:
+        - data
+        - code
+        - message

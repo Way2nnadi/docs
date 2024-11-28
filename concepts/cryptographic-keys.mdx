@@ -1,0 +1,83 @@
+---
+title: "Cryptographic Keys"
+icon: "key"
+---
+
+We leverage cryptographic keys to verify the http requests for authenticity and integrity.
+
+- **Authenticity** of any system that requests access to API specific resources
+- **Integrity** of specific message fields to guard against message tampering
+
+### Supported Key Types
+
+We currently only support [ED25519](https://datatracker.ietf.org/doc/html/rfc8032) key type.
+
+### Instructions to Generate Keys
+
+<Tip>
+  When generating the keys, make sure to replace `{organization_email}` with
+  your own organization email.
+</Tip>
+
+<Steps>
+  <Step title="Generate Staging Keys">
+    ```bash
+      ssh-keygen -t ed25519 -f ./staging-pipevest-ed25519 -C "{organization_email}"
+    ```
+  </Step>
+  <Step title="Copy Staging Public Key">
+    <Tabs>
+      <Tab title="MacOs">
+        ```bash
+          pbcopy <  ~/.ssh/staging-pipevest-ed25519.pub
+        ```
+      </Tab>
+      <Tab title="Linux">
+        ```bash
+          cat ~/.ssh/staging-pipevest-ed25519.pub | xclip
+        ```
+      </Tab>
+      <Tab title="Windows">
+        ```bash
+          cat ~/.ssh/staging-pipevest-ed25519.pub | clip
+        ```
+      </Tab>
+    </Tabs>
+
+    <Note>This public key will be submitted when requesting for API access</Note>
+
+  </Step>
+  <Step title="Generate Production Keys">
+    ```bash
+      ssh-keygen -t ed25519 -f ./production-pipevest-ed25519 -C "{organization_email}"
+    ```
+
+  </Step>
+  <Step title="Copy Production Public Key">
+    <Tabs>
+      <Tab title="MacOs">
+        ```bash
+          pbcopy <  ~/.ssh/production-pipevest-ed25519.pub
+        ```
+      </Tab>
+      <Tab title="Linux">
+        ```bash
+          cat ~/.ssh/production-pipevest-ed25519.pub | xclip
+        ```
+      </Tab>
+      <Tab title="Windows">
+        ```bash
+          cat ~/.ssh/production-pipevest-ed25519.pub | clip
+        ```
+      </Tab>
+    </Tabs>
+
+    <Note>This public key will be submitted when requesting for API access</Note>
+
+  </Step>
+</Steps>
+
+<Info>
+  The generated private keys must be safely secured occuring to your
+  organizations cryptographic key retention policies.
+</Info>
