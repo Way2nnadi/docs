@@ -1,0 +1,116 @@
+---
+title: "Content Digest"
+---
+
+The [content digest signature](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Digest) that is used to validate the HTTP message content. A hashing algorithm is used to create a digest of the message body.
+With the algorithm you can then rehash the message body and validate it against the pre-computed content-digest.
+
+<Note>
+  The content digest should only be computed for requests where message body is
+  present
+</Note>
+
+#### Generate Content Digest
+
+Although `sha-256` generated digests are considered secure, we recommend using `sha-512`.
+
+<img height="200" src="/images/hash-content-digest.png" />
+
+<Steps>
+  <Step title="Compute Content Digest">
+      <Tabs>
+      <Tab title="Javascript">
+        ```javascript
+          import crypto from "crypto";
+
+          // Defining the algorithm
+          let algorithm = "sha512";
+
+          // Defining the key
+          let key = "testKey";
+
+          // Create the digest in base64 encoding
+          const digestBase64 = crypto.createHash(algorithm).update(key).digest("base64");
+
+          // Create content digest string
+          const contentDigest = `sha-512=:${digestBase64}:`;
+        ```
+      </Tab>
+      <Tab title="Python">
+        ```python
+          import hashlib
+
+          # Defining the key
+          key = "testKey"
+
+          # Create the sha512 Digest
+          digest_sha = hashlib.sha512()
+
+          # Update the key
+          digest_sha.update(key)
+
+          # Base64 encode digest
+          digest_base64 = base64.b64encode(digest_sha)
+
+          # Create content digest string
+          content_digest = f'sha-512:{digest_base64}:'
+        ```
+      </Tab>
+    </Tabs>
+
+  </Step>
+  <Step title="Make Signed Request">
+    In the below example request:
+      - `sha-512`: The algorithm used to hash the content message
+      - `RK/0...abDg=`: Base64 representation resulting from the hashed content message
+
+      ```bash
+        curl --request POST \
+          --url http://api.pipevest.com/v1/customers?sort=ASC \
+          --header 'Content-Type: application/json' \
+          --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+          --header 'Content-Length: 18' \
+          --header 'Authorization: Bearer 123456' \
+          --header 'X-Client-Id: 123456' \
+          --header 'X-Idempotency-Key: 123456' \
+          ...
+          --data '{"firstName": "John", "lastName": "Doe"}'
+      ```
+    </Step>
+
+</Steps>
+
+#### Verify Content Digest
+
+<img height="100" src="/images/verify-content-digest.png" />
+
+<Steps>
+  <Step title="Re-compute Content Digest">
+    See `Step 1` in [Generate Content Digest](/concepts/http-signature/content-digest#generate-content-digest)
+    
+    <Note>
+      We will call this `computed-content-digest`.
+    </Note>
+  </Step>
+  <Step title="Compare Digests">
+    Compare `computed-content-digest` to the one that was passed along in the original http header (i.e. - `header-content-digest`).
+
+    ```
+    computed-content-digest === header-content-digest
+    ```
+
+    <Tip>In the example below, the `header-content-digest` equals `RK/08...FabDg=`</Tip>
+    ```bash
+      curl --request POST \
+        --url http://api.pipevest.com/v1/customers \
+        --header 'Content-Digest: sha-512=:RK/08...FabDg=:' \
+        ....
+    ```
+
+  </Step>
+  
+  <Step title="Verify or Reject">
+    Reject the message, if `computed-content-digest` does not equal `header-content-digest`.
+  </Step>
+
+</Steps>

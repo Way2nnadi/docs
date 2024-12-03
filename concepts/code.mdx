@@ -14,35 +14,18 @@ icon: "code"
 - Paging, sorting and limits
 - API Rate Limiting
 - Cryptography
+
   1. Generate ed25519 public/private key pair
+
   - show instructions on how to do that MAC and PC
+
   2. Export public key and share via form
+
   - Can create form using Notion
   - Need to ask them for the IP address in which they will be making the requests from
-  3. Content-digest to assure the integrity of the request body (SHA-512)
-  - Not needed for GET requests given that the content-length is zero
-  - content-digest: SHA-512=:BASE_64_ENCODED_DIGEST_512
-  - use npm crypto as example
-  4. signature and signature-input
-  - keyId: the key id of the public key that they should have already submitted
-  - keyId: should have name of algorithm in it ex: ed25519-{unique_id}
-  5. Creating Signature
-  - @method
-  - @target-uri
-  - @path
-  - @query
-  - accept
-  - authorization
-  - content-length
-  - content-type
-  - content-digest
-  - x-idempotency-key (Not needed for GET requests)
-  - x-client-id
-  - meta data: created, expires, keyId
-  6. this digest then needs to be base64 encoded
-  - signature: sig1=:BASE_64_ENCODED_DIGEST_Ed25519:
-  7. Diagram of encoding flows
+
   8. Code Snippets of encoding flows
+
 - Authorization
   - Access token that is retrieved from calling the authentication endpoint
 - Authentication:
@@ -54,19 +37,3 @@ icon: "code"
     - scope: ["ALL.READ", "ALL.WRITE"]
     - trustedIps: [123213123]
   - Token can be revoked
-- Webhooks signatures need to be verified as well
-  - instructions on how to do that
-
-The layers of security
-
-1. Client provides pipevest with ed25519 generated public
-2. Pipevest provides client with client id and client secret
-3. Client makes request for access token using client id and client secret
-4. Pipevest provides client access token with a TTL
-5. Client makes HTTPS request
-   - Contains content-digest hash maintain request body integrity
-   - Contains signature hash to maintain request message components integrity
-6. Pipevest parsing HTTPS request
-   - Reject any request that fails content-digest and signature verification
-   - Reject any request that is not made from the listed customer IP address(es)
-7. Future Implemention - Requests can be made over VPN

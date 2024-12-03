@@ -2,3 +2,66 @@
 title: "Authentication"
 icon: "user-shield"
 ---
+
+### OAuth 2.0
+
+All API endpoints are authenticated using [OAuth 2.0](https://oauth.net/2/) standards. A client Id and client secret
+must be exchanged for a shortlived access token. This access token is then used to authenticate further requests.
+
+### Auth Flow Diagram
+
+The following diagram illustrates the authentication flow within Pipevest.
+
+<img height="200" src="/images/auth-flow.png" />
+
+### Usage
+
+<Steps>
+  <Step title="Access Token Request">
+    ```bash
+      curl --request POST \
+        --url http://api.pipevest.com/v1/auth \
+        --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+        --header 'Content-Length: 18' \
+        --header 'Content-Type: application/x-www-form-urlencoded' \
+        --header 'Signature: ...' \
+        --header 'Signature-Input: ...' \
+        --data 'clientId=<client-id>'
+        --data 'clientSecret=<client-secret>'
+    ```
+  </Step>
+  <Step title="Authenticate Requests with Token">
+    <Tip>The access token is passed into the authorization header as a bearer token</Tip>
+
+    ```bash
+      curl --request GET \
+        --url http://api.pipevest.com/v1/customers \
+        --header 'Signature: ...' \
+        --header 'Signature-Input: ...' \
+        --header 'Authorization: Bearer <access-token>' \
+        --header 'X-Client-Id: <client-id>' \
+    ```
+
+  </Step>
+</Steps>
+
+### Scopes
+
+<Note>
+  Granular scopes are yet to be implemented. All tokens are scoped have both
+  `write` and `READ` permissions
+</Note>
+
+| Name    | Permission                        | Status   |
+| ------- | --------------------------------- | -------- |
+| `write` | Write access across all resources | `ACTIVE` |
+| `read`  | Read access across all resources  | `ACTIVE` |
+
+<Card
+  title="HTTP Signatures"
+  icon="file-signature"
+  href="/concepts/http-signature/overview"
+  horizontal
+>
+  Learn how to use HTTP signatures to improve API integrity
+</Card>

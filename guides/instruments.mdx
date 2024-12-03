@@ -1,0 +1,67 @@
+---
+title: "Instruments"
+icon: "box"
+---
+
+Instruments are the individual products that can traded for a given [Investment Type](/guides/investments).
+This document will guide you on how to **get** instrument details.
+
+## Retrieving Instruments
+
+When requesting account details you can do so either by getting:
+
+- A list of instruments
+- An account by a given Id
+
+#### List of instruments
+
+<Tip>
+  Make a `GET` request to
+  [/instruments](/api-reference/endpoint/instruments/get).
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/instruments?investmentType=INTERNATIONAL_STOCKS\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>This endpoint can be [paginated and sorted](/concepts/pagination).</Note>
+
+#### Account by Id
+
+<Tip>
+  Make a `GET` request to [/instruments/\{symbol\}
+  ](/api-reference/endpoint/instruments/getBySymbol)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/instruments/APPL\
+    ...
+```
+
+## Entity Reference
+
+| Property              | Definition                                                   |
+| --------------------- | ------------------------------------------------------------ |
+| `instrumentId`        | Unique instrument identifier                                 |
+| `name`                | Unique customer identifier                                   |
+| `symbol`              | The symbol associated by the instrument                      |
+| `investmentId`        | Unique investment identifier                                 |
+| `isAvailable`         | Determines whether the instrument is available for trading   |
+| `valueChangeOverTime` | Instruments performance over a given time period.            |
+| `fractionalEnabled`   | Determines whether the instrument can be fractionally traded |
+| `createdAt`           | Created at unix timestamp                                    |
+| `updatedAt`           | Updated at unix timestamp                                    |
+
+## Webhook Subscriptions
+
+| Subscription         | Definition                              | Domain      |
+| -------------------- | --------------------------------------- | ----------- |
+| `INSTRUMENT`         | Only events that deal with instruments  | Instruments |
+| `INSTRUMENT.CREATED` | Triggered when an instrument is created | Instruments |
+| `INSTRUMENT.UPDATED` | Triggered when an instrument is updated | Instruments |

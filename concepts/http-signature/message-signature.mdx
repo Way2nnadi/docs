@@ -1,0 +1,174 @@
+---
+title: "Message Signature"
+---
+
+To generate a [message signature](https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-04.html), [cryptographic keys](/concepts/cryptographic-keys) of the ED25519 variants must first be created.
+
+<Warning>
+  We currently only support
+  [ED25519](https://datatracker.ietf.org/doc/html/rfc8032) key types.
+</Warning>
+
+#### Determine Signature Base
+
+The example signature base below is determined from the [content digest example request](/concepts/http-signature/content-digest#generate-content-digest).
+
+```
+"Authorization": Bearer 123
+"Content-Digest": sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+"Content-Length": 18
+"Content-Type": application/json
+"X-Client-Id": 123456
+"X-Idempotency-Key": 123456
+"@method": POST
+"@target-uri": http://api.pipevest.com
+"@path": /v1/customers
+"@query: ?sort=ASC
+"@signature-params": ("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584
+```
+
+#### Signature Parameters
+
+The field `@signature-params` contains an ordered list of components that make up the signature base. It is made up of two sections, fields and meta data.
+
+`"@signature-params": (fields...);meta`
+
+- [**fields**](#fields): ordered, space (` `) separated and contained within ellipsis `(...)`
+- [**meta**](#meta): unorder, semi-colon (`;`) separated and specify additional information about the cryptographic operation
+
+<Warning>
+  The order in which the fields show up in the signature base **must** match the
+  fields order in the signature params
+</Warning>
+
+#### Generate Message Signature
+
+<img height="200" src="/images/http-message-signature.png" />
+
+<Steps>
+  <Step title="Retrieve Private Key">
+    Identify the private key for the given environment. You should have one for:
+      - **Staging**
+      - **Production**
+
+    <Tip>How to [Generate Cryptographic keys](/concepts/cryptographic-keys#instructions-to-generate-keys)</Tip>
+
+  </Step>
+  <Step title="Determine Signature Base">
+    Use the [instructions here](#determine-signature-base) to determine which fields to include to generate the signature.
+
+  </Step>
+  <Step title="Calculate Signature">
+    1. Using sha-512, hash the signature base
+    2. Sign the resulting hash with the environment specific private key.
+    3. Base64 encode the signed hash, this is the final computed message signature (`computed-signature`).
+
+    <Note>For the example request below, the `computed-signature` will be `OTEyMjY4...A5NTNDMEQ=`</Note>
+
+  </Step>
+  <Step title="Signature Input">
+    The signature input is the same as the `@signature-params` and will be passed along the header. The inputs allow for the signature to be recomputed and verified.
+
+  </Step>
+  <Step title="Make Signed Request">
+    Add `Signature` and `Signature-Input` to the request header
+      - Signature: `sig1=:<computed-signature>:`
+      - Signature-Input: `sig1=<@signature-params>`
+
+    ```bash
+      curl --request POST \
+        --url http://api.pipevest.com/v1/customers?sort=ASC \
+        --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+        --header 'Content-Length: 18' \
+        --header 'Content-Type: application/json' \
+        --header 'Authorization: Bearer 123456' \
+        --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+        --header 'Signature-Input: sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+        --header 'X-Client-Id: 123456' \
+        --header 'X-Idempotency-Key: 123456' \
+        ...
+        --data '{"firstName": "John", "lastName": "Doe"}'
+    ```
+
+  </Step>
+</Steps>
+
+#### Verify Message Signature
+
+<img height="200" src="/images/verify-message-signature.png" />
+
+<Steps>
+  <Step title="Retrieve Public Key">
+    Identify the public key for the given environment. You should have one for:
+      - **Staging**
+      - **Production**
+
+    <Tip>For webhook message validation, refer to `Step 1` in [Validate Webhook Message](/concepts/webhook/validation#validate-webhook-message)</Tip>
+
+  </Step>
+  <Step title="Recompute Message Signature">
+    See `Step 2-3` in [Generate Message Signature](/concepts/http-signature/message-signature#generate-message-signature).
+    For this step, all you will need is the `sha-512` digest. There is no need to sign the hash with a key or base64 encode it.
+
+    <Note>
+      We will call this `computed-message-signature`.
+    </Note>
+
+  </Step>
+  <Step title="Identify Header Signature">
+    We will refer to the signature from the original http message as `header-message-signature`.
+
+    <Tip>In the example below, the `header-message-signature` equals `OTEyMjY4...A5NTNDMEQ=`</Tip>
+    ```bash
+      curl --request POST \
+        --url http://api.pipevest.com/v1/customers \
+        --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+        ....
+    ```
+
+  </Step>
+  <Step title="Decode and Decrypt Signature">
+    1. Using a Base64 decoder, decode the `header-message-signature`.
+    2. Using the public key from `Step 1`, decrypt the resulting decoded `header-message-signature`.
+
+    <Note>
+      We will call this final result, the `raw-header-message-signature`.
+    </Note>
+
+  </Step>
+  <Step title="Compare Signatures">
+    Compare the `computed-message-signature` to the `raw-header-message-signature`.
+
+    ```
+      computed-message-signature === raw-header-message-signature
+    ```
+
+  </Step>
+  <Step title="Verify or Reject">
+    Reject the message, if `computed-message-signature` does not equal `raw-header-message-signature`.
+  </Step>
+</Steps>
+
+#### Fields
+
+| Fields              |              Request Types              | Required |           Note           |
+| :------------------ | :-------------------------------------: | -------: | :----------------------: |
+| `Content-Type`      |         `POST`, `PUT`, `PATCH`          |      Yes |                          |
+| `Content-Digest`    |         `POST`, `PUT`, `PATCH`          |      Yes |                          |
+| `Content-Length`    |         `POST`, `PUT`, `PATCH`          |      Yes |                          |
+| `Authorization`     | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |      Yes | Not required for `/auth` |
+| `X-Client-Id`       | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |      Yes | Not required for `/auth` |
+| `X-Idempotency-Key` |    `POST`, `PUT`, `PATCH`, `DELETE`     |      Yes |                          |
+| `@method`           | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |      Yes |                          |
+| `@target-uri`       | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |      Yes |                          |
+| `@path`             | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |      Yes |                          |
+| `@query`            |             `GET`, `DELETE`             |      Yes |                          |
+| `@signature-params` | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` |      Yes |                          |
+
+#### Meta
+
+| Name      |                        Description                        | Required |              Note              |
+| :-------- | :-------------------------------------------------------: | -------: | :----------------------------: |
+| `keyid`   |  This is the id of the public key sent over to pipevest.  |      Yes | ex: `staging-pipevest-ed25519` |
+| `created` | The unix time when the cryptographic operation took place |      Yes |                                |
+| `expires` |    Unit time stamp that represents `created + 100 ms`     |       No |  Not needed, but recommended   |

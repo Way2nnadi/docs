@@ -1,0 +1,76 @@
+---
+title: "Investment Types"
+icon: "cubes"
+---
+
+[Investment Types](#investment-types) represent the bucket of different financial products that are available for trade on the Pipevest platform.
+This document will guide you on how to **get** investment type details.
+
+## Retrieving Investment Types
+
+When requesting investment types details you can do so either by getting:
+
+- A list of investment types
+- An investment type by a given Id
+
+#### List of Investment Types
+
+<Tip>
+  Make a `GET` request to
+  [/investments](/api-reference/endpoint/investments/get).
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/investments\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>This endpoint can be [paginated and sorted](/concepts/pagination).</Note>
+
+#### Investment Type by Id
+
+<Tip>
+  Make a `GET` request to [/investments/\{investmentId\}
+  ](/api-reference/endpoint/investments/getById)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/investments/123456\
+    ...
+```
+
+## Entity Reference
+
+| Property         | Definition                                                 |
+| ---------------- | ---------------------------------------------------------- |
+| `investmentId`   | Unique investment identifier                               |
+| `investmentType` | Investment type associated with the account                |
+| `isAvailable`    | Determines whether the instrument is available for trading |
+| `createdAt`      | Created at unix timestamp                                  |
+| `updatedAt`      | Updated at unix timestamp                                  |
+
+## Investment Types
+
+<Note>Only `INTERNATIONAL_STOCKS` is currently available for trade.</Note>
+
+| Name                   | Available | Definition                                                                                      |
+| ---------------------- | --------- | ----------------------------------------------------------------------------------------------- |
+| `INTERNATIONAL_STOCKS` | **Yes**   | Allows trading of international equities and stocks                                             |
+| `COMMODITY`            | No        | Allows trading of raw materials and basic resources (i.e. - Gold, Mining, Agricultral Products) |
+| `BONDS`                | No        | Allows trading of bonds                                                                         |
+| `LOCAL_STOCKS`         | No        | Allows trading of local equities and stocks                                                     |
+| `FOREIGN_EXCHANGE`     | No        | Allows trading of fiat currencies                                                               |
+| `CRYPTO`               | No        | Allows trading of crypto currencies                                                             |
+
+## Webhook Subscriptions
+
+| Subscription              | Definition                                                    | Domain      |
+| ------------------------- | ------------------------------------------------------------- | ----------- |
+| `INVESTMENT_TYPE`         | Only events that deal with investment types                   | Investments |
+| `INVESTMENT_TYPE.CREATED` | Triggered when an investment type is created                  | Investments |
+| `INVESTMENT_TYPE.UPDATED` | Triggered when an investment type is updated or there is news | Investments |

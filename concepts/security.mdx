@@ -2,3 +2,17 @@
 title: "Security Layers"
 icon: "shield"
 ---
+
+The layers of security
+
+1. Client provides pipevest with ed25519 generated public
+2. Pipevest provides client with client id and client secret
+3. Client makes request for access token using client id and client secret
+4. Pipevest provides client access token with a TTL
+5. Client makes HTTPS request
+   - Contains content-digest hash maintain request body integrity
+   - Contains signature hash to maintain request message components integrity
+6. Pipevest parsing HTTPS request
+   - Reject any request that fails content-digest and signature verification
+   - Reject any request that is not made from the listed customer IP address(es)
+7. Future Implemention - Requests can be made over VPN

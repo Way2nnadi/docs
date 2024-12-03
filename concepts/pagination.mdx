@@ -1,4 +1,56 @@
 ---
-title: "Pagination"
+title: "Pagination and Sorting"
 icon: "arrow-up-9-1"
 ---
+
+All `GET` requests that return a list can be paginated and sorted.
+
+| Name    | Definition                                                                       |
+| ------- | -------------------------------------------------------------------------------- |
+| `page`  | The current page for offseting the returned list                                 |
+| `limit` | Maximum number of items to return per request. Maximum value is 1000             |
+| `sort`  | Order in which to return the list. Either ascending(`ASC`) or descending(`DESC`) |
+
+<Note>Sorting only applies to `createdAt` date</Note>
+
+## Example Request
+
+    ```bash
+      curl --request GET \
+        --url http://api.pipevest.com/v1/customers?page=1&limit=100&sort=ASC \
+        --header 'Authorization: Bearer 123456' \
+        --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+        --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+        --header 'X-Client-Id: 123456' \
+    ```
+
+The above request would result in something similar to:
+
+```json
+{
+  "data": [...] // List of customers
+  "meta": {
+    "previousPage": 0,
+    "currentPage": 1,
+    "nextPage": 2,
+    "limit": 100,
+    "currentCount": 100,
+    "totalCount": 1000,
+    "sort": "ASC"
+  },
+  "message": "Successfully retrieved customers",
+  "code": 200
+}
+```
+
+### Meta
+
+| Name           | Definition                                         |
+| -------------- | -------------------------------------------------- |
+| `previousPage` | The previous page offset                           |
+| `currentPage`  | the current page offset                            |
+| `nextPage`     | The next page offset                               |
+| `limit`        | The return limit set on this request               |
+| `currentCount` | Total number of results returned with this request |
+| `totalCount`   | Total number of returnable results                 |
+| `sort`         | Order in which the list was returned.              |

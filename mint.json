@@ -23,7 +23,7 @@
   ],
   "topbarCtaButton": {
     "name": "Request Access",
-    "url": "https://pipevest.com"
+    "url": "https://friendly-jingle-c80.notion.site/14c9e089164b805b86d7c083e8c1e7d1?pvs=105"
   },
   "tabs": [
     {
@@ -42,19 +42,35 @@
   "navigation": [
     {
       "group": "Welcome",
-      "pages": ["introduction", "get-started"]
+      "pages": ["introduction", "get-started", "organization"]
     },
     {
       "group": "Concepts",
       "pages": [
         "concepts/authentication",
         "concepts/cryptographic-keys",
-        "concepts/http-signatures",
+        {
+          "group": "HTTP Signatures",
+          "pages": [
+            "concepts/http-signature/overview",
+            "concepts/http-signature/content-digest",
+            "concepts/http-signature/message-signature"
+          ],
+          "icon": "file-signature"
+        },
         "concepts/idempotency",
         "concepts/pagination",
-        "concepts/security",
-        "concepts/rate-limits",
-        "concepts/webhooks"
+        {
+          "group": "Webhooks",
+          "pages": [
+            "concepts/webhook/overview",
+            "concepts/webhook/configure",
+            "concepts/webhook/subscriptions",
+            "concepts/webhook/validation",
+            "concepts/webhook/testing"
+          ],
+          "icon": "share-nodes"
+        }
       ]
     },
     {
@@ -63,25 +79,42 @@
     },
     {
       "group": "",
-      "pages": ["guides/code"]
+      "pages": [
+        "guides/authentication",
+        "guides/customers",
+        "guides/accounts",
+        "guides/investments",
+        "guides/instruments",
+        "guides/requests",
+        "guides/assets",
+        "guides/portfolios",
+        "guides/transactions",
+        "guides/market-data",
+        "guides/reports",
+        "guides/webhooks"
+      ]
     },
     {
       "group": "API Reference",
-      "pages": ["api-reference/authentication"]
+      "pages": ["api-reference/overview"]
     },
     {
       "group": "Endpoints",
       "pages": [
         {
           "group": "Authentication",
-          "pages": ["api-reference/endpoint/authentication/create"]
+          "pages": [
+            "api-reference/endpoint/authentication/create",
+            "api-reference/endpoint/authentication/delete"
+          ]
         },
         {
           "group": "Customers",
           "pages": [
             "api-reference/endpoint/customers/get",
             "api-reference/endpoint/customers/getById",
-            "api-reference/endpoint/customers/create"
+            "api-reference/endpoint/customers/create",
+            "api-reference/endpoint/customers/update"
           ]
         },
         {
@@ -122,7 +155,7 @@
           "pages": [
             "api-reference/endpoint/assets/get",
             "api-reference/endpoint/assets/getById",
-            "api-reference/endpoint/assets/create"
+            "api-reference/endpoint/assets/addToPortfolio"
           ]
         },
         {
@@ -148,6 +181,7 @@
         {
           "group": "Reports",
           "pages": [
+            "api-reference/endpoint/reports/get",
             "api-reference/endpoint/reports/getById",
             "api-reference/endpoint/reports/create"
           ]
@@ -156,7 +190,9 @@
           "group": "Webhooks",
           "pages": [
             "api-reference/endpoint/webhooks/get",
+            "api-reference/endpoint/webhooks/getKey",
             "api-reference/endpoint/webhooks/create",
+            "api-reference/endpoint/webhooks/createTest",
             "api-reference/endpoint/webhooks/update"
           ]
         }

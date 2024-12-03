@@ -1,0 +1,41 @@
+---
+title: "Market Data"
+icon: "chart-line"
+---
+
+Market Data provides the historical performance data for a given [Instrument](/guides/instruments).
+This document will guide you on how to **get** Market Data details.
+
+<Tip>
+  Make a `GET` request to [/market/data/\{instrumentId\}
+  ](/api-reference/endpoint/market-data/get)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/market/data?start=1234567890&end=1234567890&timeFrame=1d\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+## Entity Reference
+
+| Property       | Definition                                               |
+| -------------- | -------------------------------------------------------- |
+| `marketDataId` | Unique market Data identifier                            |
+| `instrumentId` | Unique instrument identifier                             |
+| `name`         | The display name of the asset                            |
+| `currency`     | Associated currency                                      |
+| `symbol`       | The symbol associated by the instrument                  |
+| `open`         | Instrument opening trade value                           |
+| `high`         | Instrument highest trade value                           |
+| `low`          | Instrument lowest trade value                            |
+| `close`        | Instrument closing trade value                           |
+| `volume`       | Instrument trade volume                                  |
+| `start`        | Market data start date as UNIX timestamp                 |
+| `end`          | Market data end date as UNIX timestamp                   |
+| `timeFrame`    | The time frames used to determine instrument market data |
+| `createdAt`    | Created at unix timestamp                                |
+| `updatedAt`    | Updated at unix timestamp                                |

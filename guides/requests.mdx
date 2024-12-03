@@ -1,0 +1,173 @@
+---
+title: "Requests"
+icon: "paper-plane"
+---
+
+Requests allow the purchase of [Instruments](/guides/instruments) and the sell of [Assets](/guides/assets).
+This document will guide you on how to **create**, **update** and **get** request details.
+
+## Creating a Request
+
+There are 2 types of requests:
+
+- `Purchase Request`
+- `Sell Request`
+
+#### Purchase Request
+
+<Tip>
+  Make a `POST` request to
+  [/requests/purchase](/api-reference/endpoint/requests/createPurchase)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/requests/purchase\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Length: 18' \
+    --header 'Content-Type: application/json' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data '{"customerId": 123456, "currency": "ZK", "instrumentId": 123456, "purchaseAmount": 100 }'
+```
+
+#### Sell Request
+
+<Tip>
+  Make a `POST` request to
+  [/requests/sell](/api-reference/endpoint/requests/createSell)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/requests/purchase/sell\
+    ...
+    --data '{"customerId": 123456, "currency": "ZK", "assetId": 123456, "sellAmount": 100 }'
+```
+
+<Note>Instead of `sellAmount`, a `sellPercentage` can be provided.</Note>
+
+#### Recurring Requests
+
+Optionally, requests can be set to recurring mode:
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/requests/purchase/purchase\
+    ...
+    --data '{"customerId": 123456,..., "isRecurring": true, "schedule": "WEEKLY" }'
+```
+
+## Updating Requests
+
+If you need to cancel a request:
+
+<Tip>
+  Make a `PUT` request to [/requests](/api-reference/endpoint/requests/update)
+</Tip>
+
+```bash
+  curl --request PUT \
+    --url http://api.pipevest.com/v1/requests\
+    ...
+    --data '{"shouldCancelRequest": true}'
+```
+
+## Retrieving Requests
+
+When requesting account details you can do so either by getting:
+
+- A list of requests
+- An account by a given Id
+
+#### List of Requests
+
+<Tip>
+  Make a `GET` request to [/requests](/api-reference/endpoint/requests/get).
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/requests?customerId=123456\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>This endpoint can be [paginated and sorted](/concepts/pagination).</Note>
+
+#### Request by Id
+
+<Tip>
+  Make a `GET` request to [/requests/\{requestId\}
+  ](/api-reference/endpoint/requests/getById)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/requests/123456\
+    ...
+```
+
+## Entity Reference
+
+| Property      | Definition                                                         |
+| ------------- | ------------------------------------------------------------------ |
+| `requestId`   | Unique request identifier                                          |
+| `customerId`  | Unique customer identifier                                         |
+| `symbol`      | The symbol associated by the instrument                            |
+| `requestType` | The type of request being made                                     |
+| `status`      | The status of the request                                          |
+| `currency`    | Associated currency                                                |
+| `isRecurring` | Determines whether the request should be in recurring mode         |
+| `schedule`    | The recurring schedule in which the instrument should be purchased |
+| `createdAt`   | Created at unix timestamp                                          |
+| `updatedAt`   | Updated at unix timestamp                                          |
+
+#### Purchase Request Entity
+
+<Note>Includes the additional properties:</Note>
+
+| Property         | Definition                                                |
+| ---------------- | --------------------------------------------------------- |
+| `instrumentId`   | Unique instrument identifier                              |
+| `purchaseAmount` | The total purchase amount for an asset or group of assets |
+
+#### Sell Request Entity
+
+<Note>Includes the additional properties:</Note>
+
+| Property         | Definition                                                     |
+| ---------------- | -------------------------------------------------------------- |
+| `assetId`        | Unique asset identifier                                        |
+| `sellAmount`     | The total amount to sell from an asset or group of assets      |
+| `sellPercentage` | The percentage amount to sell from an asset or group of assets |
+
+## Status
+
+| Name        | Definition                           |
+| ----------- | ------------------------------------ |
+| `PENDING`   | The request is currently in progress |
+| `COMPLETED` | The request has complete processing  |
+| `CANCELED`  | The request was cancelled            |
+| `ERROR`     | The request ended in an error        |
+
+## Request Type
+
+| Name       | Definition                        |
+| ---------- | --------------------------------- |
+| `PURCHASE` | Sets the request to purchase mode |
+| `SELL`     | Sets the request to sell mode     |
+
+## Webhook Subscriptions
+
+| Subscription      | Definition                          | Domain   |
+| ----------------- | ----------------------------------- | -------- |
+| `REQUEST`         | Only events that deal with requests | Requests |
+| `REQUEST.CREATED` | Triggered when a request is created | Requests |
+| `REQUEST.UPDATED` | Triggered when a request is updated | Requests |

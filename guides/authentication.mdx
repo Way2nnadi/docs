@@ -1,0 +1,87 @@
+---
+title: "Authentication"
+icon: "user-shield"
+---
+
+[0Auth 2.0](https://oauth.net/2/) standardized access tokens allow authenticated requests to be made to the Pipevest API.
+This document will guide you on how to **create**, and **delete** authentication tokens.
+
+## Creating an Auth Token
+
+To create an Auth Token:
+
+<Tip>
+  Make a `POST` request to
+  [/auth](/api-reference/endpoint/authentication/create)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/auth\
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Length: 18' \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data 'clientId=123456'
+    --data 'clientSecret=some-secret'
+```
+
+<Note>
+  The resulting access token has a
+  [TTL](https://en.wikipedia.org/wiki/Time_to_live) of `60 mins`.
+</Note>
+
+## Revoke Auth Token
+
+To revoke an auth token:
+
+<Tip>
+  Make a `DELETE` request to
+  [/auth](/api-reference/endpoint/authentication/delete)
+</Tip>
+
+```bash
+  curl --request DELETE \
+    --url http://api.pipevest.com/v1/auth?accessTokenId=123456\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+    --header 'X-Idempotency-Key: 123456' \
+```
+
+## Entity Reference
+
+| Property        | Definition                                           |
+| --------------- | ---------------------------------------------------- |
+| `accessTokenId` | Unique access token identifier                       |
+| `accessToken`   | Client shortlived access token. TTL of `60 mins`     |
+| `expiresIn`     | A token's current TTL                                |
+| `maxTTL`        | A token's max time to TTL                            |
+| `type`          | A token's authorization type                         |
+| `scope`         | The authorization scopes associated with token       |
+| `trustedIps`    | The list of ip addresses whitelisted for this client |
+| `createdAt`     | Created at unix timestamp                            |
+| `updatedAt`     | Updated at unix timestamp                            |
+
+<Note> Access token `type` will always be `Bearer`</Note>
+
+## Webhook Subscriptions
+
+| Subscription   | Definition                                | Domain          |
+| -------------- | ----------------------------------------- | --------------- |
+| `AUTH`         | Only events that deal with authentication | Authentications |
+| `AUTH.CREATED` | Triggered when an auth token is created   | Authentications |
+| `AUTH.DELETED` | Triggered when an auth token is deleted   | Authentications |
+
+<Card
+  title="Authentication Concepts"
+  icon="user-shield"
+  href="/concepts/authentication"
+  horizontal
+>
+  Check out the auth mechanisms used to keep the API secure
+</Card>

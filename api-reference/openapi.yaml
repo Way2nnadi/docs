@@ -5,11 +5,17 @@ info:
   version: 0.0.1
 servers:
   - url: http://api.pipevest.com/v1
-    description: Main (production) server
+    description: Production server
+  - url: http://api.staging.pipevest.com/v1
+    description: Staging server
 security:
-  - ApiKeyAuth: []
+  - BearerAuth: []
 paths:
   /accounts:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Accounts
@@ -20,6 +26,9 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/CustomerId"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of investment accounts
@@ -27,7 +36,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -42,7 +51,10 @@ paths:
     post:
       tags:
         - Accounts
-      summary: Creates an investment account.
+      summary: Creates an investment account
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create an account
         required: true
@@ -69,7 +81,10 @@ paths:
     put:
       tags:
         - Accounts
-      summary: Updates an investment account.
+      summary: Updates an investment account
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create an account
         required: true
@@ -94,6 +109,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /accounts/{accountId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Accounts
@@ -121,6 +140,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /assets:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Assets
@@ -141,6 +164,9 @@ paths:
           description: filter by portfolioId
           schema:
             $ref: "#/components/schemas/PortfolioId"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of customer assets
@@ -148,7 +174,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -159,34 +185,11 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-    post:
-      tags:
-        - Assets
-      summary: Adds an asset to a portfolio
-      requestBody:
-        description: Details used to add an asset to a portfolio
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreatePortofolioAsset"
-      responses:
-        "200":
-          description: A JSON array of customer assets
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Created"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/PortofolioAsset"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
   /assets/{assetId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Assets
@@ -214,10 +217,17 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /auth:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XIdempotencyKey"
     post:
       tags:
         - Auth
       summary: Returns an access token
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
       requestBody:
         description: Details used to create a customer within the system
         required: true
@@ -241,11 +251,37 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Auth
+      summary: Revokes an access token
+      parameters:
+        - name: accessTokenId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/AccessTokenId"
+        - $ref: "#/components/parameters/XCliendId"
+      responses:
+        "204":
+          description: No content
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /customers:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Customers
       summary: Returns list of customers
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of customer details
@@ -253,7 +289,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -268,6 +304,9 @@ paths:
       tags:
         - Customers
       summary: Creates a customer
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create a customer within the system
         required: true
@@ -295,6 +334,9 @@ paths:
       tags:
         - Customers
       summary: Updates a customer
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to update a customer within the system
         required: true
@@ -319,6 +361,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /customers/{customerId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Customers
@@ -347,6 +393,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /instruments:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Instruments
@@ -354,10 +404,13 @@ paths:
       parameters:
         - name: investmentType
           in: query
-          description: the investment type
+          description: The investment type
           required: true
           schema:
             $ref: "#/components/schemas/InvestmentType"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of investment instruments
@@ -365,7 +418,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -377,6 +430,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /instruments/{symbol}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Instruments
@@ -406,10 +463,18 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /investments:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Investments
       summary: Returns a list of investment types.
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of investment types
@@ -417,7 +482,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -430,6 +495,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /investments/{investmentId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Investments
@@ -437,7 +506,7 @@ paths:
       parameters:
         - name: investmentId
           in: path
-          description: the investment Id
+          description: The investment Id
           required: true
           schema:
             type: integer
@@ -457,14 +526,18 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-  /market/data:
+  /market/data/{instrumentId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Market Data
       summary: Returns market data for an instrument
       parameters:
         - name: instrumentId
-          in: query
+          in: path
           required: true
           schema:
             $ref: "#/components/schemas/InstrumentId"
@@ -500,6 +573,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /portfolio:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Portfolio
@@ -511,6 +588,9 @@ paths:
           required: true
           schema:
             type: integer
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of investment portfolios
@@ -518,7 +598,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -537,6 +617,9 @@ paths:
       tags:
         - Portfolio
       summary: Creates an investment portfolio
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create a portfolio
         required: true
@@ -564,6 +647,9 @@ paths:
       tags:
         - Requests
       summary: Updates a portfolio
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         required: true
         content:
@@ -587,6 +673,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /portfolio/{portfolioId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Portfolio
@@ -613,11 +703,75 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+  /portfolio/assets:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
+    post:
+      tags:
+        - Assets
+      summary: Adds an asset to a portfolio
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
+      requestBody:
+        description: Details used to add an asset to a portfolio
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePortofolioAsset"
+      responses:
+        "200":
+          description: A JSON array of customer assets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Created"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PortofolioAsset"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /reports:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
+    get:
+      tags:
+        - Reports
+      summary: Return list of report details
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
+      responses:
+        "200":
+          description: Report details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Report"
     post:
       tags:
         - Reports
       summary: Creates trigger to generate reports
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create a reports trigger
         required: true
@@ -642,6 +796,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /reports/{reportId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Reports
@@ -663,14 +821,16 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Report"
+                        $ref: "#/components/schemas/Report"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
   /requests:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Requests
@@ -685,6 +845,9 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/RequestType"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A JSON array of customer instrument requests
@@ -692,7 +855,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -707,6 +870,9 @@ paths:
       tags:
         - Requests
       summary: Updates an instrument request
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         required: true
         content:
@@ -730,6 +896,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /requests/{requestId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Requests
@@ -758,10 +928,17 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /requests/purchase:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     post:
       tags:
         - Requests
       summary: Creates an instrument purchase request
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create a purchase request
         required: true
@@ -786,10 +963,17 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /requests/sell:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     post:
       tags:
         - Requests
       summary: Creates an asset sell request
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create a sell asset request
         required: true
@@ -814,6 +998,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /transactions:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Transactions
@@ -824,6 +1012,10 @@ paths:
           description: the customer unique id
           schema:
             type: integer
+          required: true
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SortParam"
       responses:
         "200":
           description: A list of customer transactions
@@ -831,7 +1023,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/Success"
+                  - $ref: "#/components/schemas/SuccessMeta"
                   - type: object
                     properties:
                       data:
@@ -843,6 +1035,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /transactions/{transactionId}:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Transactions
@@ -871,10 +1067,14 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
   /webhooks:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
     get:
       tags:
         - Webhooks
-      summary: Webhook configuration
+      summary: Return a webhook configuration
       responses:
         "200":
           description: Webhook configuration
@@ -894,7 +1094,10 @@ paths:
     post:
       tags:
         - Webhooks
-      summary: Creates an webhook configuration
+      summary: Creates a webhook configuration
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to create a webhook config
         required: true
@@ -904,7 +1107,7 @@ paths:
               $ref: "#/components/schemas/CreateWebhook"
       responses:
         "201":
-          description: Details of a created customer asset request
+          description: Details of a created webhook
           content:
             application/json:
               schema:
@@ -921,7 +1124,10 @@ paths:
     put:
       tags:
         - Webhooks
-      summary: Updates an webhook configuration
+      summary: Updates a webhook configuration
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
         description: Details used to update a webhook config
         required: true
@@ -931,7 +1137,7 @@ paths:
               $ref: "#/components/schemas/UpdateWebhook"
       responses:
         "200":
-          description: Details of an update customer asset request
+          description: Details of an update webhook
           content:
             application/json:
               schema:
@@ -945,12 +1151,59 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+  /webhooks/key:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
+    get:
+      tags:
+        - Webhooks
+      summary: Returns the public key for verifies webhook message signatures
+      responses:
+        "200":
+          description: Details of an update webhook
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Success"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/WebhookKey"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /webhooks/test:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XCliendId"
+    post:
+      tags:
+        - Webhooks
+      summary: Sends test payload to webhook endpoint
+      parameters:
+        - $ref: "#/components/parameters/ContentDigest"
+        - $ref: "#/components/parameters/XIdempotencyKey"
+      responses:
+        "204":
+          description: No Content
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: x-api-key
+    BearerAuth:
+      type: http
+      scheme: bearer
   responses:
     OK:
       description: The request succeeded
@@ -979,18 +1232,91 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
+  parameters:
+    ContentDigest:
+      in: header
+      name: Content-Digest
+      schema:
+        type: string
+        example: "sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:"
+        description: |
+          Base64 encoded sha-512 hash of the http message body.
+
+          This key isn not required for `GET` and `DELETE` requests.
+
+          [Learn how to generate content digest](/concepts/http-signature/content-digest)
+      required: true
+    LimitParam:
+      in: query
+      name: limit
+      schema:
+        $ref: "#/components/schemas/Limit"
+    PageParam:
+      in: query
+      name: page
+      schema:
+        $ref: "#/components/schemas/Page"
+    SortParam:
+      in: query
+      name: sort
+      schema:
+        $ref: "#/components/schemas/Sort"
+    Signature:
+      in: header
+      name: Signature
+      schema:
+        type: string
+        example: "sig1=:OTEyMjY4...A5NTNDMEQ=:"
+        description: |
+          Base64 encoded encryption of the http message request components.
+
+          [Learn how signatures work](/concepts/http-signature/message-signature)
+      required: true
+    SignatureInput:
+      in: header
+      name: Signature-Input
+      schema:
+        type: string
+        example: 'sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584'
+        description: |
+          An ordered list of components that make up the signature base. It is used to recompute and verify the `Signature`
+
+          [Learn how signatures work](/concepts/http-signature/message-signature)
+      required: true
+    XCliendId:
+      in: header
+      name: X-Client-Id
+      schema:
+        $ref: "#/components/schemas/ClientId"
+      example: client-id
+      required: true
+    XIdempotencyKey:
+      in: header
+      name: X-Idempotency-Id
+      schema:
+        type: string
+        example: 01937261-e216-754f-99ba-c1170d65dd28
+        description: |
+          Unique identifier passed into each a mutable request (i.e `POST`, `PUT`, `PATCH`, `DELETE`)
+
+          This key isn not required for `GET` requests
+      required: true
   schemas:
     # Entity Units
     AccessToken:
-      description: Client shortlived access token
+      description: Client shortlived access token. TTL of `60 mins`
       type: string
       example: 01937261-e216-754f-99ba-c1170d65dd28
     AccessTokenExpiresIn:
-      description: A token's current time to live(TTL)
+      description: A token's current TTL
       type: integer
       example: 123
+    AccessTokenId:
+      description: Unique access token identifier
+      type: integer
+      example: 123456
     AccessTokenMaxTTL:
-      description: A token's max time to live(TTL)
+      description: A token's max time to TTL
       type: integer
       example: 123
     AccessTokenType:
@@ -999,8 +1325,8 @@ components:
       example: Bearer
     AccessTokenScope:
       description: The authorization scopes associated with token
-      enum: [ALL.READ, ALL.WRITE]
-      example: [ALL.READ, ALL.WRITE]
+      enum: [read, write]
+      example: [read, write]
     AccountId:
       description: Unique account identifier
       type: integer
@@ -1022,7 +1348,7 @@ components:
       type: string
       example: APPL
     AvailablePosition:
-      description: The quantity of the asset currently available for trading.
+      description: The quantity of the asset currently available for trading
       type: integer
       example: 5
     CancelRequest:
@@ -1037,6 +1363,14 @@ components:
       description: Private passcode shared with the client
       type: string
       example: client-secret
+    CountCurrent:
+      description: Total number of results returned with a request
+      type: integer
+      example: 100
+    CountTotal:
+      description: Total number of returnable results
+      type: integer
+      example: 1000
     CreatedAt:
       description: Created at unix timestamp
       type: integer
@@ -1049,6 +1383,10 @@ components:
       description: Unique customer identifier
       type: integer
       example: 123456
+    CustomerStatus:
+      description: Current status of the customer
+      enum: [ACTIVE, SUSPENDED, CLOSED]
+      example: ACTIVE
     Email:
       description: A valid email
       type: string
@@ -1062,7 +1400,7 @@ components:
       type: string
       example: John
     FractionalEnabled:
-      description: determines whether the instrument can be traded fractionally
+      description: Determines whether the instrument can be fractionally traded
       type: boolean
       example: true
     InstrumentId:
@@ -1085,6 +1423,14 @@ components:
       description: Instrument closing trade value
       type: integer
       example: 200.00
+    InstrumentName:
+      description: The display name of the instrument
+      type: string
+      example: Apple Inc.
+    InstrumentSymbol:
+      description: The symbol associated by the instrument
+      type: string
+      example: APPL
     InstrumentVolume:
       description: Instrument trade volume
       type: integer
@@ -1104,7 +1450,7 @@ components:
         Currently only `INTERNATIONAL_STOCKS` is available
         More options will be available in the near future
 
-        Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `BONDS`]
+        Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `CRYPTO`]
       type: string
       enum: [INTERNATIONAL_STOCKS]
       example: INTERNATIONAL_STOCKS
@@ -1114,19 +1460,26 @@ components:
       example: true
     IsRecurring:
       description: |
-        Determines whether the request should be made recurringly
+        Determines whether the request should be in recurring mode
 
         Defaults to `false`
 
-        Refer to [Requests documentation](https://docs.pipevest.com) to better understand how recurring works
+        Refer to [Requests documentation](/guides/requests#recurring-requests) to better understand how recurring works
       type: boolean
       example: false
     LastName:
-      description: The customers first name
+      description: The customers last name
       type: string
       example: Knox
+    Limit:
+      description: The maximum numbers of items to return.
+      type: integer
+      minimum: 1
+      maximum: 1000
+      default: 100
+      example: 100
     LockedPosition:
-      description: The quantity of the asset currently locked in for trading.
+      description: The quantity of the asset currently locked in for trading
       type: integer
       example: 5
     MarketDataId:
@@ -1141,6 +1494,11 @@ components:
       description: The current market value of an asset or group of assets
       type: integer
       example: 11550.00
+    Page:
+      description: The page offset for the items returned
+      type: integer
+      minimum: 0
+      example: 0
     PercentChange:
       description: The change percent change
       type: integer
@@ -1158,20 +1516,24 @@ components:
       example: 123456
     PortfolioStatus:
       description: Current status of the portfolio
-      enum: [ACTIVE, CLOSED]
+      enum: [ACTIVE, SUSPENDED, CLOSED]
       example: ACTIVE
     Position:
       description: The total quantity of the asset currently owned by the customer
       type: integer
       example: 10
     PurchaseAmount:
-      description: The total purchase amount for an asset or group of assets
+      description: The total purchase amount for an instrument
       type: integer
       example: 1550.00
     PurchasePrice:
       description: The value of 1 unit of the asset during initial purchase
       type: integer
       example: 500.00
+    PublicKey:
+      description: Cryptographic key used for verifying http message signatures
+      type: string
+      example: ssh-ed25519 DDDDC3NzaC1lZDI1NTE5DDDFIH0qa5TtbV3FwK7EcQDTyhbrzzRGol9sjK9L0lhk56Iu test@companyx.com
     ReferenceId:
       description: Externally provided unique identifier
       type: integer
@@ -1182,7 +1544,7 @@ components:
       example: 123456
     RequestStatus:
       description: The status of the request
-      enum: [PENDING, COMPLETE, CANCELED, NOT_COMPLETE]
+      enum: [PENDING, COMPLETED, CANCELED, ERROR]
       example: PENDING
     RequestType:
       description: The type of request being made
@@ -1194,7 +1556,7 @@ components:
       example: 123456
     ReportStatus:
       description: Current status of the report
-      enum: [PROCESSING, COMPLETE, ERROR]
+      enum: [PROCESSING, COMPLETED, ERROR]
       example: PROCESSING
     ReportType:
       description: The type of report
@@ -1202,6 +1564,7 @@ components:
       example: REGULATORY
     ReportTypes:
       type: array
+      description: List of report types
       items:
         $ref: "#/components/schemas/ReportType"
     ResponseCode:
@@ -1217,16 +1580,23 @@ components:
       type: integer
       example: 1550.00
     SellPercentage:
-      description: The percentage amount to sell
+      description: The percentage amount to sell from an asset or group of assets
       type: integer
       example: 50.0
     Schedule:
       description: |
-        The schedule in which the asset should be purchased or sold in a recurring manner
+        The recurring schedule in which the asset should be purchased or sold.
 
         Defaults to `ONCE`
       enum: [ONCE, DAILY, WEEKLY, BI_WEEKLY, MONTHLY]
       example: ONCE
+    Sort:
+      description: |
+        The date order in which to sort the items
+
+        This currently only works to sort `createdAt`.
+      enum: [ASC, DESC]
+      example: ASC
     StartDate:
       description: Market data start date as UNIX timestamp
       type: integer
@@ -1245,8 +1615,8 @@ components:
       example: 123456
     TransactionStatus:
       description: The status for the transaction
-      enum: [PENDING, COMPLETE]
-      example: COMPLETE
+      enum: [PENDING, COMPLETED, CANCELED, ERROR]
+      example: COMPLETED
     TrustedIpAddress:
       description: An ip address whitelisted for this client
       type: string
@@ -1270,7 +1640,7 @@ components:
       example: 123456
     WebhookStatus:
       description: The status of the webhook
-      enum: [ACTIVE, IN_ACTIVE]
+      enum: [ACTIVE, DEACTIVED]
       example: ACTIVE
     WebhookSubscription:
       description: A webhook subscription
@@ -1306,11 +1676,11 @@ components:
     WebhookSubscriptions:
       type: array
       description: |
-        Refer to [Webhook documentation](https://docs.pipevest.com) to understand how subscriptions work
+        Refer to [Webhook documentation](/concepts/webhook/subscriptions) to understand how subscriptions work.
       items:
         $ref: "#/components/schemas/WebhookSubscription"
     WebhookUrl:
-      description: A valid url
+      description: A valid https url
       type: string
       example: https://companyx.com/webhooks
 
@@ -1391,6 +1761,8 @@ components:
       type: object
       description: Details of the authenticated token request
       properties:
+        accessTokenId:
+          $ref: "#/components/schemas/AccessTokenId"
         accessToken:
           $ref: "#/components/schemas/AccessToken"
         expiresIn:
@@ -1408,6 +1780,7 @@ components:
         updatedAt:
           $ref: "#/components/schemas/UpdatedAt"
       required:
+        - accessTokenId
         - accessToken
         - expiresIn
         - maxTTL
@@ -1430,7 +1803,7 @@ components:
             Currently only `INTERNATIONAL_STOCKS` is available
             More options will be available in the near future
 
-            Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `BONDS`]
+            Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `CRYPTO`]
           type: array
           items:
             $ref: "#/components/schemas/InvestmentType"
@@ -1570,6 +1943,8 @@ components:
           $ref: "#/components/schemas/FirstName"
         lastName:
           $ref: "#/components/schemas/LastName"
+        status:
+          $ref: "#/components/schemas/CustomerStatus"
         referenceId:
           $ref: "#/components/schemas/ReferenceId"
         createdAt:
@@ -1580,6 +1955,7 @@ components:
         - customerId
         - firstName
         - lastName
+        - status
         - referenceId
         - createdAt
         - updatedAt
@@ -1589,9 +1965,9 @@ components:
         instrumentId:
           $ref: "#/components/schemas/InstrumentId"
         name:
-          $ref: "#/components/schemas/AssetName"
+          $ref: "#/components/schemas/InstrumentName"
         symbol:
-          $ref: "#/components/schemas/AssetSymbol"
+          $ref: "#/components/schemas/InstrumentSymbol"
         investmentId:
           $ref: "#/components/schemas/InvestmentId"
         isAvailable:
@@ -1638,12 +2014,14 @@ components:
       properties:
         marketDataId:
           $ref: "#/components/schemas/MarketDataId"
+        instrumentId:
+          $ref: "#/components/schemas/InstrumentId"
         name:
           $ref: "#/components/schemas/AssetName"
         currency:
           $ref: "#/components/schemas/Currency"
         symbol:
-          $ref: "#/components/schemas/AssetSymbol"
+          $ref: "#/components/schemas/InstrumentSymbol"
         open:
           $ref: "#/components/schemas/InstrumentOpen"
         high:
@@ -1664,14 +2042,63 @@ components:
           $ref: "#/components/schemas/CreatedAt"
         updatedAt:
           $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - marketDataId
+        - instrumentId
+        - name
+        - currency
+        - symbol
+        - open
+        - high
+        - low
+        - close
+        - volume
+        - start
+        - end
+        - timeFrame
+        - createdAt
+        - updatedAt
+    Meta:
+      type: object
+      properties:
+        previousPage:
+          allOf:
+            - $ref: "#/components/schemas/Page"
+            - description: The previous page offset for the items returned
+        currentPage:
+          $ref: "#/components/schemas/Page"
+        nextPage:
+          allOf:
+            - $ref: "#/components/schemas/Page"
+            - description: The next page offset for the items returned
+        limit:
+          $ref: "#/components/schemas/Limit"
+        currentCount:
+          $ref: "#/components/schemas/CountCurrent"
+        totalCount:
+          $ref: "#/components/schemas/CountTotal"
+        sort:
+          allOf:
+            - $ref: "#/components/schemas/Sort"
+            - description: Order for `createdAt` in which the list was returned.
+      required:
+        - previousPage
+        - currentPage
+        - nextPage
+        - limit
+        - currentCount
+        - totalCount
+        - sort
     Portfolio:
       type: object
       description: An investment portfolio
       properties:
-        accountId:
-          $ref: "#/components/schemas/AccountId"
         portfolioId:
           $ref: "#/components/schemas/PortfolioId"
+        accountId:
+          $ref: "#/components/schemas/AccountId"
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
         currency:
           $ref: "#/components/schemas/Currency"
         investmentAmount:
@@ -1742,36 +2169,36 @@ components:
         - $ref: "#/components/schemas/RequestSell"
     RequestPurchase:
       type: object
+      description: Purchase request entity
       properties:
         requestId:
           $ref: "#/components/schemas/RequestId"
-        assetId:
-          $ref: "#/components/schemas/AssetId"
         instrumentId:
           $ref: "#/components/schemas/InstrumentId"
         customerId:
           $ref: "#/components/schemas/CustomerId"
         symbol:
-          $ref: "#/components/schemas/AssetSymbol"
+          $ref: "#/components/schemas/InstrumentSymbol"
         requestType:
-          $ref: "#/components/schemas/RequestType"
+          description: The type of request being made
+          enum: [PURCHASE]
+          example: PURCHASE
         status:
           $ref: "#/components/schemas/RequestStatus"
-        purchaseAmount:
-          $ref: "#/components/schemas/PurchaseAmount"
         currency:
           $ref: "#/components/schemas/Currency"
         isRecurring:
           $ref: "#/components/schemas/IsRecurring"
         schedule:
           $ref: "#/components/schemas/Schedule"
+        purchaseAmount:
+          $ref: "#/components/schemas/PurchaseAmount"
         createdAt:
           $ref: "#/components/schemas/CreatedAt"
         updatedAt:
           $ref: "#/components/schemas/UpdatedAt"
       required:
         - requestId
-        - assetId
         - instrumentId
         - symbol
         - requestType
@@ -1785,21 +2212,20 @@ components:
         - updatedAt
     RequestSell:
       type: object
+      description: Sell request entity
       properties:
         requestId:
           $ref: "#/components/schemas/RequestId"
         assetId:
           $ref: "#/components/schemas/AssetId"
-        instrumentId:
-          $ref: "#/components/schemas/InstrumentId"
         customerId:
           $ref: "#/components/schemas/CustomerId"
         symbol:
           $ref: "#/components/schemas/AssetSymbol"
         requestType:
-          allOf:
-            - $ref: "#/components/schemas/RequestType"
-            - example: SELL
+          description: The type of request being made
+          enum: [SELL]
+          example: SELL
         status:
           $ref: "#/components/schemas/RequestStatus"
         currency:
@@ -1819,7 +2245,6 @@ components:
       required:
         - requestId
         - assetId
-        - instrumentId
         - symbol
         - requestType
         - status
@@ -1885,6 +2310,8 @@ components:
           $ref: "#/components/schemas/FirstName"
         lastName:
           $ref: "#/components/schemas/LastName"
+        status:
+          $ref: "#/components/schemas/CustomerStatus"
         referenceId:
           $ref: "#/components/schemas/ReferenceId"
       required:
@@ -1892,14 +2319,14 @@ components:
     UpdatePortfolio:
       type: object
       properties:
-        accountId:
-          $ref: "#/components/schemas/AccountId"
+        portfolioId:
+          $ref: "#/components/schemas/PortfolioId"
         currency:
           $ref: "#/components/schemas/Currency"
         status:
           $ref: "#/components/schemas/PortfolioStatus"
       required:
-        - accountId
+        - portfolioId
     UpdateRequest:
       type: object
       properties:
@@ -1919,6 +2346,7 @@ components:
           $ref: "#/components/schemas/WebhookSubscriptions"
     ValueChange:
       type: object
+      description: Instruments performance over a given time period
       properties:
         timeFrame:
           $ref: "#/components/schemas/TimeFrame"
@@ -1940,13 +2368,34 @@ components:
         url:
           $ref: "#/components/schemas/WebhookUrl"
         subscriptions:
-          type: array
-          items:
-            $ref: "#/components/schemas/WebhookSubscription"
+          $ref: "#/components/schemas/WebhookSubscriptions"
         createdAt:
           $ref: "#/components/schemas/CreatedAt"
         updatedAt:
           $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - webhookId
+        - status
+        - url
+        - subscriptions
+        - createdAt
+        - updatedAt
+    WebhookKey:
+      type: object
+      properties:
+        webhookId:
+          $ref: "#/components/schemas/WebhookId"
+        key:
+          $ref: "#/components/schemas/PublicKey"
+        createdAt:
+          $ref: "#/components/schemas/CreatedAt"
+        updatedAt:
+          $ref: "#/components/schemas/UpdatedAt"
+      required:
+        - webhookId
+        - key
+        - createdAt
+        - updatedAt
 
     # Response Components
     Created:
@@ -1991,3 +2440,12 @@ components:
         - data
         - code
         - message
+    SuccessMeta:
+      allOf:
+        - $ref: "#/components/schemas/Success"
+        - type: object
+          properties:
+            meta:
+              $ref: "#/components/schemas/Meta"
+          required:
+            - meta

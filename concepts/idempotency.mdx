@@ -1,4 +1,34 @@
 ---
 title: "Idempotency"
-icon: "boxes-stacked"
+icon: "cube"
 ---
+
+The in case where an operation can potentially mutate resources within a system, an idempotency key is required.
+The key is used to assure that, no matter how many times the operation is applied, the mutation only takes place at most once.
+
+## Representation in a Request
+
+Idempotency keys are universally unique identifiers and should be passed into the header as `X-Idempotency-Key`.
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/auth \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --header 'Signature: ...' \
+    --header 'Signature-Input: ...' \
+    --header 'X-Idempotency-Key: b9fa7097-befa-4869-a91b-a7f79400d917' \
+    --data 'clientId=<client-id>'
+    --data 'clientSecret=<client-secret>'
+```
+
+## When to use them
+
+Refer to the table below to know which a request operation to the Pipevest API requires an idempotency key.
+
+| Request Type | Required |
+| ------------ | -------- |
+| `GET`        | No       |
+| `POST`       | Yes      |
+| `PUT`        | Yes      |
+| `PATCH`      | Yes      |
+| `DELETE`     | Yes      |

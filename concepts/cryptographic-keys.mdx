@@ -3,14 +3,11 @@ title: "Cryptographic Keys"
 icon: "key"
 ---
 
-We leverage cryptographic keys to verify the http requests for authenticity and integrity.
-
-- **Authenticity** of any system that requests access to API specific resources
-- **Integrity** of specific message fields to guard against message tampering
+We leverage cryptographic keys to create cryptographic message signatures. These signatures help to maintain the authenticity and integrity of HTTP requests within the Pipevest platform.
 
 ### Supported Key Types
 
-We currently only support [ED25519](https://datatracker.ietf.org/doc/html/rfc8032) key type.
+We currently only support [ED25519](https://datatracker.ietf.org/doc/html/rfc8032) key types.
 
 ### Instructions to Generate Keys
 

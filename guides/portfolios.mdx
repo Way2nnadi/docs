@@ -1,0 +1,129 @@
+---
+title: "Portfolios"
+icon: "rectangle-list"
+---
+
+A Portfolio encapsulates a set of assets and aggregates their performance over time.
+This document will guide you on how to **create**, **update** and **get** ortfolio details.
+
+## Creating an Portfolio
+
+To create an account:
+
+<Tip>
+  Make a `POST` request to
+  [/portfolio](/api-reference/endpoint/portfolio/create)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/portfolio\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Length: 18' \
+    --header 'Content-Type: application/json' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data '{"customerId": 123456, "currency": "ZK"}'
+```
+
+## Updating Portfolios
+
+If you need to change an portfolio's details:
+
+<Tip>
+  Make a `PUT` request to [/portfolio](/api-reference/endpoint/portfolio/update)
+</Tip>
+
+```bash
+  curl --request PUT \
+    --url http://api.pipevest.com/v1/portfolio\
+    ...
+    --data '{"portfolioId": 123456, "currency": "USD", "status": "ACTIVE"}'
+```
+
+#### Adding an asset to a Portfolio
+
+Refer to [Assets documentation](/guides/assets#adding-an-asset-to-a-portfolio) to learn how to add an asset to a portfolio.
+
+## Retrieving Portfolios
+
+Portfolios with an `accountId` were automatically [created by the Pipevest system](/guides/customers#creation-side-effects).
+Wherein there is no `accountId`, the Portfolio was manually created via the API and does not have an associated [Account](/guides/accounts).
+
+When requesting portfolio details you can do so either by getting:
+
+- A list of portfolio
+- An portfolio by a given Id
+
+#### List of Portfolios
+
+<Tip>
+  Make a `GET` request to [/portfolio](/api-reference/endpoint/portfolio/get).
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/portfolio?customerId=123456\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>This endpoint can be [paginated and sorted](/concepts/pagination).</Note>
+
+#### Portfolio by Id
+
+<Tip>
+  Make a `GET` request to [/portfolio/\{portfolioId\}
+  ](/api-reference/endpoint/portfolio/getById)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/portfolio/123456\
+    ...
+```
+
+## Entity Reference
+
+| Property           | Definition                                                 |
+| ------------------ | ---------------------------------------------------------- |
+| `portfolioId`      | Unique portfolio identifier                                |
+| `customerId`       | Unique customer identifier                                 |
+| `currency`         | Associated currency                                        |
+| `investmentAmount` | The total amount invested into an asset or group of assets |
+| `marketValue`      | The current market value of an asset or group of assets    |
+| `performance`      | The performance of all the assets under the portfolio      |
+| `status`           | Current status of the portfolio                            |
+| `investmentType`   | Investment type associated with the account                |
+| `createdAt`        | Created at unix timestamp                                  |
+| `updatedAt`        | Updated at unix timestamp                                  |
+
+#### Pipevest created Portfolios
+
+<Note>Includes the additional properties:</Note>
+
+| Property    | Definition                |
+| ----------- | ------------------------- |
+| `accountId` | Unique account identifier |
+
+## Status
+
+| Name        | Definition                                                        |
+| ----------- | ----------------------------------------------------------------- |
+| `ACTIVE`    | Portfolio is currently active and able to trade                   |
+| `SUSPENDED` | Portfolio has been temporarily suspended, and is unable to trade. |
+| `CLOSED`    | Portfolio has been permanently prevented from trading             |
+
+## Webhook Subscriptions
+
+| Subscription        | Definition                            | Domain     |
+| ------------------- | ------------------------------------- | ---------- |
+| `PORTFOLIO`         | Only events that deal with portfolio  | Portfolios |
+| `PORTFOLIO.CREATED` | Triggered when a portfolio is created | Portfolios |
+| `PORTFOLIO.UPDATED` | Triggered when a portfolio is updated | Portfolios |

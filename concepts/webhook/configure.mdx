@@ -1,0 +1,92 @@
+---
+title: "Configuration and Payload"
+---
+
+<Note>
+  Before configuring a webhook there are a few reqiurements that must be met.
+</Note>
+
+#### Requirements
+
+<Steps>
+  <Step title="Define Webook Url">
+    1. Webhook urls must be a valid HTTPS urls
+    2. The host of the url must be a DNS name and not an IP address
+
+    <Tip>
+      Example: `https://companyx.com/webhooks`
+    </Tip>
+
+  </Step>
+  <Step title="Determine Event Subscriptions">
+    Decide which [event subscriptions](#event-subscription-types) are appropriate for your use case.
+
+    <Tip>
+      Example: `ACCOUNT`, `CUSTOMER.UPDATED`, `TRANSACTION`
+    </Tip>
+
+  </Step>
+</Steps>
+
+#### Configuration Request
+
+Make a `POST` request to the [/webhook](/api-reference/endpoint/webhooks/create) to create and configure a webhook.
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/webhooks \
+    --header 'Authorization: Bearer 123456' \
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Type: application/application/json' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data '{"url": "https://companyx.com/webhooks", "subscriptions": ["ACCOUNT", "CUSTOMER.UPDATED", "TRANSACTION"]}'
+```
+
+#### Configuration Side Effects
+
+Successfully, configuring a webhook will have the following additional results:
+
+1. <div>
+     Automatic subscription to `WEBHOOK.CREATED` <Icon icon="lightbulb" />
+     [Learn More](/concepts/webhook/subscriptions#default-subscription)
+   </div>
+2. <div>
+     Cryptographic public key generated. <Icon icon="lightbulb" />
+     [Learn More](/concepts/webhook/validation#public-key)
+   </div>
+
+## Webhook Payload
+
+The webhook payload is composed of the following:
+
+| Name        | Definition                                                                    |
+| ----------- | ----------------------------------------------------------------------------- |
+| `eventId`   | Unique event identifier. Should be used to dedup potentially duplicate events |
+| `event`     | The event type. Example: `ACCOUNT`                                            |
+| `createdAt` | Unix timestamp of when the event was created                                  |
+| `data`      | The data associated with the event                                            |
+
+#### Example Payload
+
+In the example below, an account was been created within the system.
+
+```json
+{
+  "eventId": "c00ec5f3-bbf7-4284-9e2f-88d886f5068c",
+  "event": "ACCOUNT.CREATED",
+  "createdAt": 1732893584,
+  "data": {
+    "accountId": 123456,
+    "customerId": 123456,
+    "status": "ACTIVE",
+    "investmentType": "INTERNATIONAL_STOCKS",
+    "currency": "ZK",
+    "createdAt": 1732893584,
+    "updatedAt": 1732893584
+  }
+}
+```

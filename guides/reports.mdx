@@ -1,0 +1,117 @@
+---
+title: "Reports"
+icon: "file"
+---
+
+A report aggregates data for a given topic. We current support `USER`, `TRANSACTION` and `REGULATORY` reports.
+This document will guide you on how to **create**, and **get** report details.
+
+## Creating a Report
+
+To create a report:
+
+<Tip>
+  Make a `POST` request to [/reports](/api-reference/endpoint/reports/create)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/reports\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Length: 18' \
+    --header 'Content-Type: application/json' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data '{"reportTypes": ["REGULATORY", "USER"]}'
+```
+
+#### URL and emails
+
+You can specify a `url` and/or `email` when creating a report request. The resulting report will be sent to the specified `url` and/or `email`.
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/reports\
+    ...
+    --data '{..., "url": "https://companyx/reports", "email": "reports@companyx.com"}'
+```
+
+<Note>
+  If neither email or url is specified, the report will be sent to the
+  organization's email on file
+</Note>
+
+## Retrieving Reports
+
+When requesting report details you can do so either by getting:
+
+- A list of reports
+- An report by a given Id
+
+#### List of Reports
+
+<Tip>
+  Make a `GET` request to [/reports](/api-reference/endpoint/reports/get).
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/reports\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>This endpoint can be [paginated and sorted](/concepts/pagination).</Note>
+
+#### Report by Id
+
+<Tip>
+  Make a `GET` request to [/reports/\{reportId\}
+  ](/api-reference/endpoint/reports/getById)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/reports/123456\
+    ...
+```
+
+## Entity Reference
+
+| Property      | Definition                          |
+| ------------- | ----------------------------------- |
+| `reportId`    | Unique report identifier            |
+| `reportTypes` | List of report types                |
+| `status`      | Current status of the report        |
+| `url`         | A valid url to receive the report   |
+| `email`       | A valid email to receive the report |
+| `createdAt`   | Created at unix timestamp           |
+| `updatedAt`   | Updated at unix timestamp           |
+
+## Status
+
+| Name         | Definition                          |
+| ------------ | ----------------------------------- |
+| `PROCESSING` | Report is currenting processing     |
+| `COMPLETED`  | Report has completed processing     |
+| `ERROR`      | Report processing ended in an error |
+
+## Report Types
+
+| Name          | Definition          |
+| ------------- | ------------------- |
+| `USER`        | User reports        |
+| `TRANSACTION` | Transaction reports |
+| `REGULATORY`  | Regulatory reports  |
+
+## Webhook Subscriptions
+
+| Subscription | Definition                         | Domain  |
+| ------------ | ---------------------------------- | ------- |
+| `REPORT`     | Only events that deal with reports | Reports |

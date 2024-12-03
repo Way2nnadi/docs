@@ -1,0 +1,64 @@
+---
+title: "Organizations"
+---
+
+An organization is a partner that has successfully [requested access](https://friendly-jingle-c80.notion.site/14c9e089164b805b86d7c083e8c1e7d1?pvs=105) to our API and has fully onboarded.
+
+## Getting Client Id and Client Secret
+
+After you submit your staging and production public key, we will send over your `clientId` and `clientSecret`.
+The client keys will be encrypted with the public key of the respective environment and sent over to your organization email on file.
+
+<Note>
+  Staging client keys will be encrypted using the staging public key, and the
+  production client keys will be encrypted with the production public key
+</Note>
+
+# Steps to Production
+
+In order to get access to our Production environment. You must complete the following steps.
+
+<Steps>
+  <Step title="Already Requested API Access">
+    Refer to [Get Started](/get-started).
+
+    <Note>
+      At this point you will receive your staging `clientId` and `clientSecret`.
+    </Note>
+
+  </Step>
+  <Step title="Completed Integration on Staging Environment">
+    <Card
+      title="Create Your First Customer"
+      icon="users"
+      href="/guides/customers"
+      horizontal
+    >
+      Learn how to create Customers via the API
+    </Card>
+  </Step>
+  <Step title="Give us the Green Light" icon="rocket">
+    Simply send an email to `engineering.support@pipevest.com` once you are
+    ready, stating that you would like to be move to Production.
+
+    <Note>
+      At this point you will receive your production `clientId` and `clientSecret`.
+    </Note>
+
+  </Step>
+</Steps>
+
+## Default Investment Types
+
+During onboarding, you may specify your default [Investment Types](/guides/investments). When a [Customer](/guides/customers) is created for your organization,
+they will automatically have access to these default Investment Types.
+
+<Note>
+  At the current moment, only `INTERNATIONAL_STOCKS` is currently available for
+  trade. <Icon icon="lightbulb" />
+  [Learn More](/guides/investments#investment-types)
+</Note>
+
+## Update Organization Details
+
+If you need to update your organization details, reach out to `engineering.support@pipevest.com` and we will guide you through that process.

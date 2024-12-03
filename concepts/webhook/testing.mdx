@@ -1,0 +1,17 @@
+---
+title: "Testing Webhook"
+---
+
+To test your webhook, simply make a request to [/webhook/test](/api-reference/endpoint/webhooks/createTest).
+This will trigger a test payload to be sent to the webhook url.
+
+Payload should look similar to this:
+
+```json
+{
+  "eventId": "6c707869-5b99-4208-b074-9f407da672b9",
+  "event": "WEBHOOK.TEST",
+  "createdAt": 1732893584,
+  "data": null
+}
+```

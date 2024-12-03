@@ -1,0 +1,149 @@
+---
+title: "Webhooks"
+icon: "share-nodes"
+---
+
+[Webhooks](/concepts/webhook/overview) are event driven operations within the Pipevest system.
+Whenever an event is triggered a `JSON` payload is sent to all urls that have subscribed to the event.
+This document will guide you on how to **create**, **update** and **get** webhook details.
+
+## Creating an Auth Token
+
+To create an Auth Token:
+
+<Tip>
+  Make a `POST` request to [/auth](/api-reference/endpoint/webhooks/create)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/auth\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Length: 18' \
+    --header 'Content-Type: application/json' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data '{"url": "https://companyx.com/webhook2", "subscriptions": ["ALL"]}'
+
+```
+
+<Note>
+  The resulting access token has a
+  [TTL](https://en.wikipedia.org/wiki/Time_to_live) of `60 mins`.
+</Note>
+
+## Testing Webhook
+
+To test a webhook:
+
+<Tip>
+  Make a `POST` request to
+  [/auth/test](/api-reference/endpoint/webhooks/createTest)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/auth/test\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+```
+
+## Updating Webhooks
+
+If you need to change a webhook's details:
+
+<Tip>
+  Make a `PUT` request to [/webhooks](/api-reference/endpoint/webhooks/update)
+</Tip>
+
+```bash
+  curl --request PUT \
+    --url http://api.pipevest.com/v1/webhooks\
+    ...
+    --data '{"url": "https://companyx.com/webhook2", "subscriptions": ["ACCOUNT"]}'
+```
+
+<Warning>
+  Updaing the list of `subscriptions` will replace the previous subscriptions.
+</Warning>
+
+## Retrieving Webhook Config
+
+To retrieve a webhook's configuration:
+
+<Tip>
+  Make a `GET` request to [/webhooks](/api-reference/endpoint/webhooks/get)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/webhooks\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+## Retrieving Webhook Public Key
+
+To retrieve a webhook's public key:
+
+<Tip>
+  Make a `GET` request to
+  [/webhooks/key](/api-reference/endpoint/webhooks/getKey)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/webhooks/key\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>
+  This key is used to [valdiate the webhook
+  message](/concepts/webhook/validation).
+</Note>
+## Entity Reference
+
+| Property        | Definition                    |
+| --------------- | ----------------------------- |
+| `webhookId`     | Unique webhook identifier     |
+| `status`        | The status of the webhook     |
+| `url`           | A valid https url             |
+| `subscriptions` | List of webhook subscriptions |
+| `createdAt`     | Created at unix timestamp     |
+| `updatedAt`     | Updated at unix timestamp     |
+
+## Status
+
+| Name        | Definition                 |
+| ----------- | -------------------------- |
+| `ACTIVE`    | Webhook is currenting live |
+| `DEACTIVED` | Webhook has been deactived |
+
+## Webhook Subscriptions
+
+| Subscription      | Definition                                                              | Domain   |
+| ----------------- | ----------------------------------------------------------------------- | -------- |
+| `WEBHOOK`         | Only events that deal with webhooks                                     | Webhooks |
+| `WEBHOOK.CREATED` | Triggered when a webhook is created. Subscription created automatically | Webhooks |
+| `WEBHOOK.UPDATED` | Triggered when a webhook is updated                                     | Webhooks |
+
+<Card
+  title="Webhook Concepts"
+  icon="share-nodes"
+  href="/concepts/webhook/overview"
+  horizontal
+  iconType="solid"
+>
+  Deep dive into webhooks on the Pipevest platforms
+</Card>

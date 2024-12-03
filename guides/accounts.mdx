@@ -1,0 +1,128 @@
+---
+title: "Accounts"
+icon: "building-columns"
+---
+
+An account for each organization default [Investment Type](/guides/investments) is created when a customer is created.
+There is a `1 to 1` mapping between investment types and accounts. Meaning, for each investment type that a customer can access,
+there can **only** exist one account for it.
+
+<img height="100" src="/images/accounts-investment-type.png" />
+
+This document will guide you on how to **create**, **update** and **get** account details.
+
+## Creating an Account
+
+To create an account:
+
+<Tip>
+  Make a `POST` request to [/accounts](/api-reference/endpoint/accounts/create)
+</Tip>
+
+```bash
+  curl --request POST \
+    --url http://api.pipevest.com/v1/accounts\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+    --header 'Content-Length: 18' \
+    --header 'Content-Type: application/json' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+    --header 'X-Idempotency-Key: 123456' \
+    ...
+    --data '{"customerId": 123456, "currency": "ZK", "investmentTypes": "INTERNATIONAL_STOCKS"}'
+```
+
+<Warning>
+  Successfully creating an account will result in some [side
+  effects](#creation-side-effects).
+</Warning>
+
+## Updating Accounts
+
+If you need to change an account's details:
+
+<Tip>
+  Make a `PUT` request to [/accounts](/api-reference/endpoint/accounts/update)
+</Tip>
+
+```bash
+  curl --request PUT \
+    --url http://api.pipevest.com/v1/accounts\
+    ...
+    --data '{"accountId": 123456, "status": "ACTIVE", "currency": "USD"}'
+```
+
+## Retrieving Accounts
+
+When requesting account details you can do so either by getting:
+
+- A list of accounts
+- An account by a given Id
+
+#### List of Accounts
+
+<Tip>
+  Make a `GET` request to [/accounts](/api-reference/endpoint/accounts/get).
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/accounts?customerId=123456\
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+<Note>This endpoint can be [paginated and sorted](/concepts/pagination).</Note>
+
+#### Account by Id
+
+<Tip>
+  Make a `GET` request to [/accounts/\{accountId\}
+  ](/api-reference/endpoint/accounts/getById)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url http://api.pipevest.com/v1/accounts/123456\
+    ...
+```
+
+## Creation Side Effects
+
+When an account is created, the following resources are also created:
+
+<img height="100" src="/images/account-side-effect.png" />
+
+1. A [Portfolio](/guides/portfolios) linked to the account.
+
+## Entity Reference
+
+| Property         | Definition                                  |
+| ---------------- | ------------------------------------------- |
+| `accountId`      | Unique account identifier                   |
+| `customerId`     | Unique customer identifier                  |
+| `status`         | Current status of the account               |
+| `investmentType` | Investment type associated with the account |
+| `currency`       | Associated currency                         |
+| `createdAt`      | Created at unix timestamp                   |
+| `updatedAt`      | Updated at unix timestamp                   |
+
+## Status
+
+| Name        | Definition                                                      |
+| ----------- | --------------------------------------------------------------- |
+| `ACTIVE`    | Account is currently active and able to trade                   |
+| `SUSPENDED` | Account has been temporarily suspended, and is unable to trade. |
+| `CLOSED`    | Account has been permanently prevented from trading             |
+
+## Webhook Subscriptions
+
+| Subscription      | Definition                           | Domain   |
+| ----------------- | ------------------------------------ | -------- |
+| `ACCOUNT`         | Only events that deal with accounts  | Accounts |
+| `ACCOUNT.CREATED` | Triggered when an account is created | Accounts |
+| `ACCOUNT.UPDATED` | Triggered when an account is updated | Accounts |

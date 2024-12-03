@@ -1,0 +1,49 @@
+---
+title: "Validations"
+---
+
+Webhook signatures need to be verified in order to guarantee that the webhook was
+sent from our system and was not tampered with via a [man in the middle attack](https://en.wikipedia.org/wiki/Man-in-the-middle_attack).
+
+## Public Key
+
+Upon [configuring a webhook](/concepts/webhook/configure), a cryptographic public key is generated for verifying the webhook message signatures.
+This verification process assures the authencity and integrity of the webhook message.
+
+## Validate Webhook Message
+
+<Steps>
+  <Step title="Retrieve Public Key">
+    That key can be retrieved by making a `GET` request to [/webhooks/key](/api-reference/endpoint/webhooks/getKey)
+
+    ```bash
+      curl --request GET \
+        --url http://api.pipevest.com/v1/webhooks/key \
+        --header 'Authorization: Bearer 123456' \
+        --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+        --header 'Signature-Input: sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+        --header 'X-Client-Id: 123456' \
+    ```
+
+  </Step>
+  <Step title="Verify Content Digest">
+    <Card title="Content Digest" href="/concepts/http-signature/content-digest#verify-content-digest" icon="book" horizontal>
+      Learn more about content digest
+    </Card>
+  </Step>
+  <Step title="Verify HTTP Message Signature">
+    <Card
+      title="Message Signature"
+      href="/concepts/http-signature/message-signature#verify-message-signature"
+      icon="book"
+      horizontal
+    >
+      Learn more about message signatures
+    </Card>
+  </Step>
+</Steps>
+
+<Warning>
+  If you are unable to verify either to content digest or the HTTP message
+  signature, you should discard the webhook message
+</Warning>
