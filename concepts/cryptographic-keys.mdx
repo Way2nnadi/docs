@@ -11,32 +11,36 @@ We currently only support [ED25519](https://datatracker.ietf.org/doc/html/rfc803
 
 ### Instructions to Generate Keys
 
-<Tip>
-  When generating the keys, make sure to replace `{organization_email}` with
-  your own organization email.
-</Tip>
+<Note> You can use any Cryptographic Key Generator of your choice</Note>
 
 <Steps>
   <Step title="Generate Staging Keys">
+    1. Private Key
     ```bash
-      ssh-keygen -t ed25519 -f ./staging-pipevest-ed25519 -C "{organization_email}"
+      openssl genpkey -algorithm ed25519 -outform PEM -out staging-pipevest-private-ed25519.pem   
     ```
+
+    2. Public Key
+    ```bash
+      openssl pkey -in staging-pipevest-private-ed25519.pem -pubout -out staging-pipevest-public-ed25519.pub
+    ```
+
   </Step>
   <Step title="Copy Staging Public Key">
     <Tabs>
       <Tab title="MacOs">
         ```bash
-          pbcopy <  ~/.ssh/staging-pipevest-ed25519.pub
+          pbcopy < ./staging-pipevest-public-ed25519.pub
         ```
       </Tab>
       <Tab title="Linux">
         ```bash
-          cat ~/.ssh/staging-pipevest-ed25519.pub | xclip
+          cat ./staging-pipevest-public-ed25519.pub | xclip
         ```
       </Tab>
       <Tab title="Windows">
         ```bash
-          cat ~/.ssh/staging-pipevest-ed25519.pub | clip
+          cat ./staging-pipevest-public-ed25519.pub | clip
         ```
       </Tab>
     </Tabs>
@@ -45,8 +49,14 @@ We currently only support [ED25519](https://datatracker.ietf.org/doc/html/rfc803
 
   </Step>
   <Step title="Generate Production Keys">
+    1. Private Key
     ```bash
-      ssh-keygen -t ed25519 -f ./production-pipevest-ed25519 -C "{organization_email}"
+      openssl genpkey -algorithm ed25519 -outform PEM -out production-pipevest-private-ed25519.pem   
+    ```
+
+    2. Public Key
+    ```bash
+      openssl pkey -in production-pipevest-private-ed25519.pem -pubout -out production-pipevest-public-ed25519.pub
     ```
 
   </Step>
@@ -54,17 +64,17 @@ We currently only support [ED25519](https://datatracker.ietf.org/doc/html/rfc803
     <Tabs>
       <Tab title="MacOs">
         ```bash
-          pbcopy <  ~/.ssh/production-pipevest-ed25519.pub
+          pbcopy < ./production-pipevest-public-ed25519.pub
         ```
       </Tab>
       <Tab title="Linux">
         ```bash
-          cat ~/.ssh/production-pipevest-ed25519.pub | xclip
+          cat ./production-pipevest-public-ed25519.pub | xclip
         ```
       </Tab>
       <Tab title="Windows">
         ```bash
-          cat ~/.ssh/production-pipevest-ed25519.pub | clip
+          cat ./production-pipevest-public-ed25519.pub | clip
         ```
       </Tab>
     </Tabs>
