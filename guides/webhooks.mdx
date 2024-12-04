@@ -17,7 +17,7 @@ To create an Auth Token:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/auth\
+    --url https://api.pipevest.com/v1/auth\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -46,7 +46,7 @@ To test a webhook:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/auth/test\
+    --url https://api.pipevest.com/v1/auth/test\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -64,7 +64,7 @@ If you need to change a webhook's details:
 
 ```bash
   curl --request PUT \
-    --url http://api.pipevest.com/v1/webhooks\
+    --url https://api.pipevest.com/v1/webhooks\
     ...
     --data '{"url": "https://companyx.com/webhook2", "subscriptions": ["ACCOUNT"]}'
 ```
@@ -83,7 +83,7 @@ To retrieve a webhook's configuration:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/webhooks\
+    --url https://api.pipevest.com/v1/webhooks\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -101,7 +101,7 @@ To retrieve a webhook's public key:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/webhooks/key\
+    --url https://api.pipevest.com/v1/webhooks/key\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \

@@ -17,7 +17,7 @@ To create an account:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/portfolio\
+    --url https://api.pipevest.com/v1/portfolio\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -40,7 +40,7 @@ If you need to change an portfolio's details:
 
 ```bash
   curl --request PUT \
-    --url http://api.pipevest.com/v1/portfolio\
+    --url https://api.pipevest.com/v1/portfolio\
     ...
     --data '{"portfolioId": 123456, "currency": "USD", "status": "ACTIVE"}'
 ```
@@ -67,7 +67,7 @@ When requesting portfolio details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/portfolio?customerId=123456\
+    --url https://api.pipevest.com/v1/portfolio?customerId=123456\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -85,7 +85,7 @@ When requesting portfolio details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/portfolio/123456\
+    --url https://api.pipevest.com/v1/portfolio/123456\
     ...
 ```
 

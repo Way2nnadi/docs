@@ -14,23 +14,35 @@ With the algorithm you can then rehash the message body and validate it against 
 
 Although `sha-256` generated digests are considered secure, we recommend using `sha-512`.
 
-<img height="200" src="/images/hash-content-digest.png" />
+<img
+  className="block dark:hidden"
+  height="200"
+  src="/images/hash-content-digest.png"
+/>
+<img
+  className="hidden dark:block"
+  height="200"
+  src="/images/hash-content-digest-dark.png"
+/>
 
 <Steps>
   <Step title="Compute Content Digest">
-      <Tabs>
+    <Tabs>
       <Tab title="Javascript">
         ```javascript
           import crypto from "crypto";
 
-          // Defining the algorithm
+          // Define the algorithm
           let algorithm = "sha512";
 
-          // Defining the key
-          let key = "testKey";
+          // Define the message
+          let message = JSON.stringify({
+            firstName: "John",
+            ...
+          });
 
           // Create the digest in base64 encoding
-          const digestBase64 = crypto.createHash(algorithm).update(key).digest("base64");
+          const digestBase64 = crypto.createHash(algorithm).update(message).digest("base64");
 
           // Create content digest string
           const contentDigest = `sha-512=:${digestBase64}:`;
@@ -39,15 +51,19 @@ Although `sha-256` generated digests are considered secure, we recommend using `
       <Tab title="Python">
         ```python
           import hashlib
+          import json
 
-          # Defining the key
-          key = "testKey"
+          # Define the message
+          message = json.dumps({
+            "firstName": "John",
+            ...
+          })
 
           # Create the sha512 Digest
           digest_sha = hashlib.sha512()
 
-          # Update the key
-          digest_sha.update(key)
+          # Update the message
+          digest_sha.update(message)
 
           # Base64 encode digest
           digest_base64 = base64.b64encode(digest_sha)
@@ -66,7 +82,7 @@ Although `sha-256` generated digests are considered secure, we recommend using `
 
       ```bash
         curl --request POST \
-          --url http://api.pipevest.com/v1/customers?sort=ASC \
+          --url https://api.pipevest.com/v1/customers?sort=ASC \
           --header 'Content-Type: application/json' \
           --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
           --header 'Content-Length: 18' \
@@ -82,7 +98,16 @@ Although `sha-256` generated digests are considered secure, we recommend using `
 
 #### Verify Content Digest
 
-<img height="100" src="/images/verify-content-digest.png" />
+<img
+  className="block dark:hidden"
+  height="100"
+  src="/images/verify-content-digest.png"
+/>
+<img
+  className="hidden dark:block"
+  height="200"
+  src="/images/verify-content-digest-dark.png"
+/>
 
 <Steps>
   <Step title="Re-compute Content Digest">
@@ -102,7 +127,7 @@ Although `sha-256` generated digests are considered secure, we recommend using `
     <Tip>In the example below, the `header-content-digest` equals `RK/08...FabDg=`</Tip>
     ```bash
       curl --request POST \
-        --url http://api.pipevest.com/v1/customers \
+        --url https://api.pipevest.com/v1/customers \
         --header 'Content-Digest: sha-512=:RK/08...FabDg=:' \
         ....
     ```

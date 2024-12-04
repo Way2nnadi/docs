@@ -18,7 +18,7 @@ This verification process assures the authencity and integrity of the webhook me
 
     ```bash
       curl --request GET \
-        --url http://api.pipevest.com/v1/webhooks/key \
+        --url https://api.pipevest.com/v1/webhooks/key \
         --header 'Authorization: Bearer 123456' \
         --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
         --header 'Signature-Input: sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \

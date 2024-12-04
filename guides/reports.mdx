@@ -16,7 +16,7 @@ To create a report:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/reports\
+    --url https://api.pipevest.com/v1/reports\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -35,7 +35,7 @@ You can specify a `url` and/or `email` when creating a report request. The resul
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/reports\
+    --url https://api.pipevest.com/v1/reports\
     ...
     --data '{..., "url": "https://companyx/reports", "email": "reports@companyx.com"}'
 ```
@@ -60,7 +60,7 @@ When requesting report details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/reports\
+    --url https://api.pipevest.com/v1/reports\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -78,7 +78,7 @@ When requesting report details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/reports/123456\
+    --url https://api.pipevest.com/v1/reports/123456\
     ...
 ```
 

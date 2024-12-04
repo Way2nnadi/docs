@@ -7,7 +7,16 @@ An account for each organization default [Investment Type](/guides/investments) 
 There is a `1 to 1` mapping between investment types and accounts. Meaning, for each investment type that a customer can access,
 there can **only** exist one account for it.
 
-<img height="100" src="/images/accounts-investment-type.png" />
+<img
+  className="block dark:hidden"
+  height="100"
+  src="/images/accounts-investment.png"
+/>
+<img
+  className="hidden dark:block"
+  height="100"
+  src="/images/accounts-investment-dark.png"
+/>
 
 This document will guide you on how to **create**, **update** and **get** account details.
 
@@ -21,7 +30,7 @@ To create an account:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/accounts\
+    --url https://api.pipevest.com/v1/accounts\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -49,7 +58,7 @@ If you need to change an account's details:
 
 ```bash
   curl --request PUT \
-    --url http://api.pipevest.com/v1/accounts\
+    --url https://api.pipevest.com/v1/accounts\
     ...
     --data '{"accountId": 123456, "status": "ACTIVE", "currency": "USD"}'
 ```
@@ -69,7 +78,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/accounts?customerId=123456\
+    --url https://api.pipevest.com/v1/accounts?customerId=123456\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -87,7 +96,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/accounts/123456\
+    --url https://api.pipevest.com/v1/accounts/123456\
     ...
 ```
 
@@ -95,7 +104,16 @@ When requesting account details you can do so either by getting:
 
 When an account is created, the following resources are also created:
 
-<img height="100" src="/images/account-side-effect.png" />
+<img
+  className="block dark:hidden"
+  height="100"
+  src="/images/account-side-effect.png"
+/>
+<img
+  className="hidden dark:block"
+  height="100"
+  src="/images/account-side-effect-dark.png"
+/>
 
 1. A [Portfolio](/guides/portfolios) linked to the account.
 

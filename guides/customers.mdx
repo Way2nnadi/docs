@@ -15,7 +15,7 @@ This document will guide you on how to **create**, **update** and **get** custom
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/customers\
+    --url https://api.pipevest.com/v1/customers\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -39,7 +39,7 @@ When creating a user, you can provide an optional `referenceId`. This unique ide
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/customers\
+    --url https://api.pipevest.com/v1/customers\
     ...
     --data '{"firstName": "John", "lastName": "Doe", "referenceId": 123456}'
 ```
@@ -54,7 +54,7 @@ If you need to change the customers details, you can simply update their details
 
 ```bash
   curl --request PUT \
-    --url http://api.pipevest.com/v1/customers\
+    --url https://api.pipevest.com/v1/customers\
     ...
     --data '{"customerId": 123456, "firstName": "Dohn", "lastName": "Joe"}'
 ```
@@ -66,7 +66,7 @@ effects](#update-side-effects) of this operation.
 
 ```bash
   curl --request PUT \
-    --url http://api.pipevest.com/v1/customers\
+    --url https://api.pipevest.com/v1/customers\
     ...
     --data '{"customerId": 123456, "status": "CLOSED"}'
 ```
@@ -91,7 +91,7 @@ When requesting customer details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/customers\
+    --url https://api.pipevest.com/v1/customers\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -109,7 +109,7 @@ When requesting customer details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/customers/123456\
+    --url https://api.pipevest.com/v1/customers/123456\
     ...
 ```
 
@@ -117,7 +117,16 @@ When requesting customer details you can do so either by getting:
 
 When a customer is created, the following resources are also created:
 
-<img height="100" src="/images/customer-side-effect.png" />
+<img
+  className="block dark:hidden"
+  height="100"
+  src="/images/customer-side-effect.png"
+/>
+<img
+  className="hidden dark:block"
+  height="100"
+  src="/images/customer-side-effect-dark.png"
+/>
 
 1. [Account(s)](/guides/accounts) for the customer with the default organizations [Investment Types](/guides/investments#investment-types).
 2. A [Portfolio](/guides/portfolios) linked to each account.

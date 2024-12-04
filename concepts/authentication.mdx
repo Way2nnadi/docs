@@ -12,7 +12,12 @@ must be exchanged for a shortlived access token. This access token is then used 
 
 The following diagram illustrates the authentication flow within Pipevest.
 
-<img height="200" src="/images/auth-flow.png" />
+<img className="block dark:hidden" height="200" src="/images/auth-flow.png" />
+<img
+  className="hidden dark:block"
+  height="200"
+  src="/images/auth-flow-dark.png"
+/>
 
 ### Usage
 
@@ -20,7 +25,7 @@ The following diagram illustrates the authentication flow within Pipevest.
   <Step title="Access Token Request">
     ```bash
       curl --request POST \
-        --url http://api.pipevest.com/v1/auth \
+        --url https://api.pipevest.com/v1/auth \
         --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
         --header 'Content-Length: 18' \
         --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -35,7 +40,7 @@ The following diagram illustrates the authentication flow within Pipevest.
 
     ```bash
       curl --request GET \
-        --url http://api.pipevest.com/v1/customers \
+        --url https://api.pipevest.com/v1/customers \
         --header 'Signature: ...' \
         --header 'Signature-Input: ...' \
         --header 'Authorization: Bearer <access-token>' \

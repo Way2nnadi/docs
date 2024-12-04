@@ -8,7 +8,16 @@ Additionally,
 
 An Asset can belong to both an [Account](/guides/accounts) and a [Portfolio](/guides/portfolios).
 
-<img height="100" src="/images/asset-account-portfolio.png" />
+<img
+  className="block dark:hidden"
+  height="100"
+  src="/images/asset-account-portfolio.png"
+/>
+<img
+  className="hidden dark:block"
+  height="100"
+  src="/images/asset-account-portfolio-dark.png"
+/>
 
 This document will guide you on how to **get** account details. Additionally, on how to [add an asset to a portfolio](#adding-an-asset-to-a-portfolio)
 
@@ -27,7 +36,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/assets?customerId=123456\
+    --url https://api.pipevest.com/v1/assets?customerId=123456\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -42,7 +51,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/assets?customerId=123456&accountId=123456\
+    --url https://api.pipevest.com/v1/assets?customerId=123456&accountId=123456\
     ...
 ```
 
@@ -50,7 +59,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/assets?customerId=123456&portfolioId=123456\
+    --url https://api.pipevest.com/v1/assets?customerId=123456&portfolioId=123456\
     ...
 ```
 
@@ -63,7 +72,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/assets/123456\
+    --url https://api.pipevest.com/v1/assets/123456\
     ...
 ```
 
@@ -78,7 +87,7 @@ When an asset is created is it automatically associated with an [Account](/guide
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/portfolio/assets\
+    --url https://api.pipevest.com/v1/portfolio/assets\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \

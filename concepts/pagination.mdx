@@ -17,7 +17,7 @@ All `GET` requests that return a list can be paginated and sorted.
 
     ```bash
       curl --request GET \
-        --url http://api.pipevest.com/v1/customers?page=1&limit=100&sort=ASC \
+        --url https://api.pipevest.com/v1/customers?page=1&limit=100&sort=ASC \
         --header 'Authorization: Bearer 123456' \
         --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
         --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \

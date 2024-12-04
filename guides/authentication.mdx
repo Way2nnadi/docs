@@ -17,7 +17,7 @@ To create an Auth Token:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/auth\
+    --url https://api.pipevest.com/v1/auth\
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
     --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -45,7 +45,7 @@ To revoke an auth token:
 
 ```bash
   curl --request DELETE \
-    --url http://api.pipevest.com/v1/auth?accessTokenId=123456\
+    --url https://api.pipevest.com/v1/auth?accessTokenId=123456\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \

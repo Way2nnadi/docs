@@ -22,7 +22,7 @@ There are 2 types of requests:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/requests/purchase\
+    --url https://api.pipevest.com/v1/requests/purchase\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -44,7 +44,7 @@ There are 2 types of requests:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/requests/purchase/sell\
+    --url https://api.pipevest.com/v1/requests/purchase/sell\
     ...
     --data '{"customerId": 123456, "currency": "ZK", "assetId": 123456, "sellAmount": 100 }'
 ```
@@ -57,7 +57,7 @@ Optionally, requests can be set to recurring mode:
 
 ```bash
   curl --request POST \
-    --url http://api.pipevest.com/v1/requests/purchase/purchase\
+    --url https://api.pipevest.com/v1/requests/purchase/purchase\
     ...
     --data '{"customerId": 123456,..., "isRecurring": true, "schedule": "WEEKLY" }'
 ```
@@ -72,7 +72,7 @@ If you need to cancel a request:
 
 ```bash
   curl --request PUT \
-    --url http://api.pipevest.com/v1/requests\
+    --url https://api.pipevest.com/v1/requests\
     ...
     --data '{"shouldCancelRequest": true}'
 ```
@@ -92,7 +92,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/requests?customerId=123456\
+    --url https://api.pipevest.com/v1/requests?customerId=123456\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -110,7 +110,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/requests/123456\
+    --url https://api.pipevest.com/v1/requests/123456\
     ...
 ```
 

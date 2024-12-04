@@ -4,9 +4,9 @@ info:
   description: Connecting millions of Africans to the global economy
   version: 0.0.1
 servers:
-  - url: http://api.pipevest.com/v1
+  - url: https://api.pipevest.com/v1
     description: Production server
-  - url: http://api.staging.pipevest.com/v1
+  - url: https://api.staging.pipevest.com/v1
     description: Staging server
 security:
   - BearerAuth: []
@@ -1268,7 +1268,7 @@ components:
         type: string
         example: "sig1=:OTEyMjY4...A5NTNDMEQ=:"
         description: |
-          Base64 encoded encryption of the http message request components.
+          Base64 encoded signed hash of the http message request components.
 
           [Learn how signatures work](/concepts/http-signature/message-signature)
       required: true

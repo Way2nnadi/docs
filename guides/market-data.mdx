@@ -13,7 +13,7 @@ This document will guide you on how to **get** Market Data details.
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/market/data?start=1234567890&end=1234567890&timeFrame=1d\
+    --url https://api.pipevest.com/v1/market/data?start=1234567890&end=1234567890&timeFrame=1d\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \

@@ -22,7 +22,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/instruments?investmentType=INTERNATIONAL_STOCKS\
+    --url https://api.pipevest.com/v1/instruments?investmentType=INTERNATIONAL_STOCKS\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -40,7 +40,7 @@ When requesting account details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/instruments/APPL\
+    --url https://api.pipevest.com/v1/instruments/APPL\
     ...
 ```
 

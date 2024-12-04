@@ -4,10 +4,10 @@ title: "Overview"
 
 The base urls for `staging` and `production` are as follows:
 
-| Environment  | Base Url                             |
-| ------------ | ------------------------------------ |
-| `Staging`    | `http://api.staging.pipevest.com/v1` |
-| `Production` | `http://api.pipevest.com/v1`         |
+| Environment  | Base Url                              |
+| ------------ | ------------------------------------- |
+| `Staging`    | `https://api.staging.pipevest.com/v1` |
+| `Production` | `https://api.pipevest.com/v1`         |
 
 ## Authenticating Endpoints
 
@@ -18,7 +18,7 @@ must be exchanged for a shortlived access token. This access token is then used 
   <Step title="Access Token Request">
     ```bash
       curl --request POST \
-        --url http://api.pipevest.com/v1/auth \
+        --url https://api.pipevest.com/v1/auth \
         --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
         --header 'Content-Length: 18' \
         --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -33,7 +33,7 @@ must be exchanged for a shortlived access token. This access token is then used 
 
     ```bash
       curl --request GET \
-        --url http://api.pipevest.com/v1/customers \
+        --url https://api.pipevest.com/v1/customers \
         --header 'Authorization: Bearer <access-token>' \
         --header 'Signature: ...' \
         --header 'Signature-Input: ...' \

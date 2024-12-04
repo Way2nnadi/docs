@@ -22,7 +22,7 @@ When requesting investment types details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/investments\
+    --url https://api.pipevest.com/v1/investments\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "Content-Digest" "Content-Length" "Content-Type" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
@@ -40,7 +40,7 @@ When requesting investment types details you can do so either by getting:
 
 ```bash
   curl --request GET \
-    --url http://api.pipevest.com/v1/investments/123456\
+    --url https://api.pipevest.com/v1/investments/123456\
     ...
 ```
 
@@ -58,14 +58,14 @@ When requesting investment types details you can do so either by getting:
 
 <Note>Only `INTERNATIONAL_STOCKS` is currently available for trade.</Note>
 
-| Name                   | Available | Definition                                                                                      |
-| ---------------------- | --------- | ----------------------------------------------------------------------------------------------- |
-| `INTERNATIONAL_STOCKS` | **Yes**   | Allows trading of international equities and stocks                                             |
-| `COMMODITY`            | No        | Allows trading of raw materials and basic resources (i.e. - Gold, Mining, Agricultral Products) |
-| `BONDS`                | No        | Allows trading of bonds                                                                         |
-| `LOCAL_STOCKS`         | No        | Allows trading of local equities and stocks                                                     |
-| `FOREIGN_EXCHANGE`     | No        | Allows trading of fiat currencies                                                               |
-| `CRYPTO`               | No        | Allows trading of crypto currencies                                                             |
+| Name                   | Available | Definition                                                                                       |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------ |
+| `INTERNATIONAL_STOCKS` | **Yes**   | Allows trading of international equities and stocks                                              |
+| `COMMODITY`            | No        | Allows trading of raw materials and basic resources (i.e. - Gold, Mining, Agricultural Products) |
+| `BONDS`                | No        | Allows trading of bonds                                                                          |
+| `LOCAL_STOCKS`         | No        | Allows trading of local equities and stocks                                                      |
+| `FOREIGN_EXCHANGE`     | No        | Allows trading of fiat currencies                                                                |
+| `CRYPTO`               | No        | Allows trading of crypto currencies                                                              |
 
 ## Webhook Subscriptions
 
