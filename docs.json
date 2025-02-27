@@ -1,0 +1,230 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Pipevest API",
+  "colors": {
+    "primary": "#583CD1",
+    "light": "#583CD1",
+    "dark": "#583CD1"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "dropdowns": [
+      {
+        "dropdown": "Getting Started",
+        "description": "Welcome to Pipevest's API",
+        "icon": "book",
+        "pages": [
+          {
+            "group": "Welcome",
+            "pages": ["introduction", "get-started"]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "concepts/authentication",
+              "concepts/cryptographic-keys",
+              {
+                "group": "HTTP Signatures",
+                "icon": "file-signature",
+                "pages": [
+                  "concepts/http-signature/overview",
+                  "concepts/http-signature/content-digest",
+                  "concepts/http-signature/message-signature"
+                ]
+              },
+              "concepts/idempotency",
+              "concepts/organization",
+              "concepts/pagination",
+              {
+                "group": "Webhooks",
+                "icon": "share-nodes",
+                "pages": [
+                  "concepts/webhook/overview",
+                  "concepts/webhook/configure",
+                  "concepts/webhook/subscriptions",
+                  "concepts/webhook/validation",
+                  "concepts/webhook/testing"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dropdown": "Widgets & SDKs",
+        "description": "Path of least resistance",
+        "icon": "cubes-stacked",
+        "pages": ["widgets-sdks"]
+      },
+      {
+        "dropdown": "USSD API",
+        "description": "USSD investment products",
+        "icon": "mobile-retro",
+        "pages": [
+          { "group": "Guides", "pages": ["guides/reports"] },
+          {
+            "group": "API Reference",
+            "pages": ["api-reference/endpoint/customers/get"]
+          }
+        ]
+      },
+      {
+        "dropdown": "Client API",
+        "description": "Client investment products",
+        "icon": "circle-nodes",
+        "pages": [
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/authentication",
+              "guides/customers",
+              "guides/accounts",
+              "guides/investments",
+              "guides/instruments",
+              "guides/requests",
+              "guides/assets",
+              "guides/portfolios",
+              "guides/transactions",
+              "guides/market-data",
+              "guides/reports",
+              "guides/webhooks"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/overview",
+
+              {
+                "group": "Authentication",
+                "pages": [
+                  "api-reference/endpoint/authentication/create",
+                  "api-reference/endpoint/authentication/delete"
+                ]
+              },
+              {
+                "group": "Customers",
+                "pages": [
+                  "api-reference/endpoint/customers/get",
+                  "api-reference/endpoint/customers/getById",
+                  "api-reference/endpoint/customers/create",
+                  "api-reference/endpoint/customers/update"
+                ]
+              },
+              {
+                "group": "Accounts",
+                "pages": [
+                  "api-reference/endpoint/accounts/get",
+                  "api-reference/endpoint/accounts/getById",
+                  "api-reference/endpoint/accounts/create",
+                  "api-reference/endpoint/accounts/update"
+                ]
+              },
+              {
+                "group": "Investment Types",
+                "pages": [
+                  "api-reference/endpoint/investments/get",
+                  "api-reference/endpoint/investments/getById"
+                ]
+              },
+              {
+                "group": "Instruments",
+                "pages": [
+                  "api-reference/endpoint/instruments/get",
+                  "api-reference/endpoint/instruments/getBySymbol"
+                ]
+              },
+              {
+                "group": "Requests",
+                "pages": [
+                  "api-reference/endpoint/requests/get",
+                  "api-reference/endpoint/requests/getById",
+                  "api-reference/endpoint/requests/createPurchase",
+                  "api-reference/endpoint/requests/createSell",
+                  "api-reference/endpoint/requests/update"
+                ]
+              },
+              {
+                "group": "Assets",
+                "pages": [
+                  "api-reference/endpoint/assets/get",
+                  "api-reference/endpoint/assets/getById",
+                  "api-reference/endpoint/assets/addToPortfolio"
+                ]
+              },
+              {
+                "group": "Portfolio",
+                "pages": [
+                  "api-reference/endpoint/portfolio/get",
+                  "api-reference/endpoint/portfolio/getById",
+                  "api-reference/endpoint/portfolio/create",
+                  "api-reference/endpoint/portfolio/update"
+                ]
+              },
+              {
+                "group": "Transactions",
+                "pages": [
+                  "api-reference/endpoint/transactions/get",
+                  "api-reference/endpoint/transactions/getById"
+                ]
+              },
+              {
+                "group": "Market Data",
+                "pages": ["api-reference/endpoint/market-data/get"]
+              },
+              {
+                "group": "Reports",
+                "pages": [
+                  "api-reference/endpoint/reports/get",
+                  "api-reference/endpoint/reports/getById",
+                  "api-reference/endpoint/reports/create"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "api-reference/endpoint/webhooks/get",
+                  "api-reference/endpoint/webhooks/getKey",
+                  "api-reference/endpoint/webhooks/create",
+                  "api-reference/endpoint/webhooks/createTest",
+                  "api-reference/endpoint/webhooks/update"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dropdown": "Changelog",
+        "description": "Updates and changes",
+        "icon": "bars-staggered",
+        "pages": ["changelog/api"]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:engineering.support@pipevest.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Request Access",
+      "href": "https://friendly-jingle-c80.notion.site/14c9e089164b805b86d7c083e8c1e7d1?pvs=105"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/mintlify",
+      "github": "https://github.com/mintlify",
+      "linkedin": "https://linkedin.com/company/mintlify"
+    }
+  }
+}

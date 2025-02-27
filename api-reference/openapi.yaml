@@ -86,7 +86,7 @@ paths:
         - $ref: "#/components/parameters/ContentDigest"
         - $ref: "#/components/parameters/XIdempotencyKey"
       requestBody:
-        description: Details used to create an account
+        description: Details used to update an account
         required: true
         content:
           application/json:
