@@ -1,0 +1,84 @@
+---
+title: "Stock Purchase View"
+---
+
+The stock purchase view allows the user to confirm an amount to purchase for a given stock.
+
+This flow is particularily important given that a `POST` request must be made in order to create
+the purchase order request.
+
+<Frame>
+  <img
+    className="block dark:hidden"
+    height="400"
+    width="400"
+    src="/images/ussd-stock-purchase.png"
+  />
+  <img
+    className="hidden dark:block"
+    height="400"
+    width="400"
+    src="/images/ussd-stock-purchase-dark.png"
+  />
+</Frame>
+
+### Accessing the stock purchase view
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&amount=100
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Confirm stock purchase:\n Press “1” to confirm purchase and agree to terms and conditions(pipevest.com/terms)\n 1. Confirm purchase: 100 ZK of APPL\n 2. Back\n",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL&orderType=PURCHASE",
+        "requestType": "POST"
+      },
+      {
+        "option": 2,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Confirming order purchase request
+
+<Note>
+  See the guide on [confirming purchase order
+  requests](/guides/ussd/confirm-request)
+</Note>
+
+#### Query parameters
+
+| query        | Definition                    | Required |
+| ------------ | ----------------------------- | -------- |
+| `customerId` | The unique customer identifer | `Yes`    |
+| `symbol`     | The stock symbol              | `Yes`    |
+| `amount`     | The stock purchase amount     | `No`     |
+
+### Stock Purchase Example
+
+<Card
+  title="USSD Stock Purchase View"
+  icon="money-bill-1-wave"
+  href="https://www.figma.com/proto/xkSZwzsNTpYDNQiG0QGRlu/Zamtel-USSD-Flow?node-id=108-437&t=7ty9x1l3kywQhWlB-0&scaling=min-zoom&content-scaling=fixed&page-id=72%3A258&starting-point-node-id=108%3A69&show-proto-sidebar=1"
+  horizontal
+>
+  Check out an example of the ussd stock purchase view
+</Card>

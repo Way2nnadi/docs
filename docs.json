@@ -52,20 +52,95 @@
         ]
       },
       {
-        "dropdown": "Widgets & SDKs",
-        "description": "Path of least resistance",
-        "icon": "cubes-stacked",
-        "pages": ["widgets-sdks"]
-      },
-      {
         "dropdown": "USSD API",
         "description": "USSD investment products",
         "icon": "mobile-retro",
         "pages": [
-          { "group": "Guides", "pages": ["guides/reports"] },
+          "ussd/overview",
+          "ussd/example-flow",
+          "ussd/response-definitions",
+          {
+            "group": "Guides",
+            "pages": [
+              {
+                "group": "Home",
+                "pages": ["guides/ussd/home"],
+                "icon": "house"
+              },
+              {
+                "group": "Stocks",
+                "pages": [
+                  "guides/ussd/stocks",
+                  "guides/ussd/individual-stock",
+                  "guides/ussd/stock-purchase"
+                ],
+                "icon": "box"
+              },
+              {
+                "group": "Requests",
+                "pages": [
+                  "guides/ussd/requests",
+                  "guides/ussd/confirm-request",
+                  "guides/ussd/cancel-request"
+                ],
+                "icon": "paper-plane"
+              },
+              {
+                "group": "Portfolio",
+                "pages": ["guides/ussd/portfolio"],
+                "icon": "rectangle-list"
+              },
+              {
+                "group": "Assets",
+                "pages": ["guides/ussd/assets", "guides/ussd/individual-asset"],
+                "icon": "money-bill-trend-up"
+              },
+              {
+                "group": "Transactions",
+                "pages": ["guides/ussd/transactions"],
+                "icon": "money-bill-transfer"
+              }
+            ]
+          },
           {
             "group": "API Reference",
-            "pages": ["api-reference/endpoint/customers/get"]
+            "pages": [
+              {
+                "group": "Authentication",
+                "pages": [
+                  "api-reference/ussd/authentication/create",
+                  "api-reference/ussd/authentication/delete"
+                ]
+              },
+              {
+                "group": "Home",
+                "pages": ["api-reference/ussd/home/get"]
+              },
+              {
+                "group": "Stocks",
+                "pages": ["api-reference/ussd/stocks/get"]
+              },
+              {
+                "group": "Requests",
+                "pages": [
+                  "api-reference/ussd/requests/get",
+                  "api-reference/ussd/requests/create",
+                  "api-reference/ussd/requests/update"
+                ]
+              },
+              {
+                "group": "Portfolio",
+                "pages": ["api-reference/ussd/portfolio/get"]
+              },
+              {
+                "group": "Assets",
+                "pages": ["api-reference/ussd/assets/get"]
+              },
+              {
+                "group": "Transactions",
+                "pages": ["api-reference/ussd/transactions/get"]
+              }
+            ]
           }
         ]
       },
@@ -74,6 +149,7 @@
         "description": "Client investment products",
         "icon": "circle-nodes",
         "pages": [
+          "api-reference/overview",
           {
             "group": "Guides",
             "pages": [
@@ -94,8 +170,6 @@
           {
             "group": "API Reference",
             "pages": [
-              "api-reference/overview",
-
               {
                 "group": "Authentication",
                 "pages": [

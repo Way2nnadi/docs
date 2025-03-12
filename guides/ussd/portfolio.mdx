@@ -1,0 +1,76 @@
+---
+title: "Portfolio Menu View"
+---
+
+The portfolio view allows users to see their assets, review pending order requests and transactions.
+
+<Frame>
+  <img className="block dark:hidden" src="/images/ussd-portfolio.png" />
+  <img className="hidden dark:block" src="/images/ussd-portfolio-dark.png" />
+</Frame>
+
+### Accessing the Portfolio View
+
+<Tip>
+  Make a `GET` request to [/portfolio](/api-reference/ussd/portfolio/get)
+</Tip>
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "My portfolio:\n 1.View my assets\n 2.Pending requests (TSLA)\n 3.Transaction history\n 4.Back",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456",
+        "requestType": "GET"
+      },
+      {
+        "option": 2,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING",
+        "requestType": "GET"
+      },
+      {
+        "option": 3,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456",
+        "requestType": "GET"
+      },
+      {
+        "option": 4,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Query parameters
+
+| query        | Definition                    | Required |
+| ------------ | ----------------------------- | -------- |
+| `customerId` | The unique customer identifer | `Yes`    |
+
+### Portfolio View Example
+
+<Card
+  title="USSD Portfolio View"
+  icon="rectangle-list"
+  href="https://www.figma.com/proto/xkSZwzsNTpYDNQiG0QGRlu/Zamtel-USSD-Flow?node-id=72-292&t=7ty9x1l3kywQhWlB-0&scaling=min-zoom&content-scaling=fixed&page-id=72%3A258&starting-point-node-id=108%3A69&show-proto-sidebar=1"
+  horizontal
+>
+  Check out an example of the ussd portfolio view
+</Card>

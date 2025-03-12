@@ -1,0 +1,97 @@
+---
+title: "Individual Asset Menu View"
+---
+
+The individual asset menu view allows users to general asset performance, more detailed stock information and transaction history.
+
+<Frame>
+  <img className="block dark:hidden" src="/images/ussd-individual-assets.png" />
+  <img
+    className="hidden dark:block"
+    src="/images/ussd-individual-assets-dark.png"
+  />
+</Frame>
+
+### Accessing the Assets View
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456&assetId=123456
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Apple (APPL)\n Own: 550ZK Yield: +5.50%\n 1.More Stock Details\n 2.Asset Transaction History\n 3. Sell Asset\n 4 .Back",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&detailMode=true",
+        "requestType": "GET"
+      },
+      {
+        "option": 2,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456&assetId=123456",
+        "requestType": "GET"
+      },
+      {
+        "option": 3,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL&orderType=SELL",
+        "requestType": "POST"
+      },
+      {
+        "option": 4,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Viewing asset transactions
+
+<Note>
+  See the guide on [individual asset
+  transactions](/guides/ussd/transactions#individual-asset-transactions-view)
+</Note>
+
+#### Enabling detail mode
+
+<Note>
+  See the guide on [enabling detail
+  mode](/guides/ussd/individual-stock#enabling-detail-mode)
+</Note>
+
+#### Creating a sell order request
+
+<Note>
+  See the guide on [order
+  requests](/guides/ussd/confirm-request#creating-an-order-request)
+</Note>
+
+#### Query parameters
+
+| query        | Definition                    | Required |
+| ------------ | ----------------------------- | -------- |
+| `customerId` | The unique customer identifer | `Yes`    |
+| `assetId`    | The unique asset identifer    | `Yes`    |
+
+### Assets View Example
+
+<Card
+  title="USSD Individual Assets View"
+  icon="money-bill-trend-up"
+  href="https://www.figma.com/proto/xkSZwzsNTpYDNQiG0QGRlu/Zamtel-USSD-Flow?node-id=72-314&t=7ty9x1l3kywQhWlB-0&scaling=min-zoom&content-scaling=fixed&page-id=72%3A258&starting-point-node-id=108%3A69&show-proto-sidebar=1"
+  horizontal
+>
+  Check out an example of the ussd individual asset view
+</Card>

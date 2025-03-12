@@ -1,0 +1,74 @@
+---
+title: "Home Menu View"
+---
+
+The home menu view is the main ussd view and the start point for end users to interact with pipevest system.
+
+<Frame>
+  <img
+    className="block dark:hidden"
+    height="400"
+    width="400"
+    src="/images/ussd-home.png"
+  />
+  <img
+    className="hidden dark:block"
+    height="400"
+    width="400"
+    src="/images/ussd-home-dark.png"
+  />
+</Frame>
+
+### Accessing the Home View
+
+<Tip>Make a `GET` request to [/home](/api-reference/ussd/home/get)</Tip>
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/home?customerId=123456
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Select an investment option:\n 1. Stocks\n 2. My Portfolio\n 3. Back",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456",
+        "requestType": "GET"
+      },
+      {
+        "option": 2,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Query parameters
+
+| query        | Definition                    | Required |
+| ------------ | ----------------------------- | -------- |
+| `customerId` | The unique customer identifer | `Yes`    |
+
+### Home View Example
+
+<Card
+  title="USSD Home View"
+  icon="house"
+  href="https://www.figma.com/proto/xkSZwzsNTpYDNQiG0QGRlu/Zamtel-USSD-Flow?node-id=108-267&t=7ty9x1l3kywQhWlB-0&scaling=min-zoom&content-scaling=fixed&page-id=72%3A258&starting-point-node-id=108%3A69&show-proto-sidebar=1"
+  horizontal
+>
+  Check out an example of the ussd home view
+</Card>

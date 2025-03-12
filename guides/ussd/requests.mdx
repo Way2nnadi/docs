@@ -1,0 +1,169 @@
+---
+title: "Requests Menu View"
+---
+
+The requests menu view allows users to view their various requests in their different states.
+
+<Frame>
+  <img className="block dark:hidden" src="/images/ussd-requests.png" />
+  <img className="hidden dark:block" src="/images/ussd-requests-dark.png" />
+</Frame>
+
+### Accessing the Requests View
+
+<Tip>Make a `GET` request to [/requests](/api-reference/ussd/requests/get)</Tip>
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+#### Get requests by status
+
+For the pending requests view, the status must be set to `PENDING`.
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456?status=PENDING
+    ...
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Pending requests:\n Select a request to view more details about the investment 1.APPL Purchase 200ZK 21/08/24\n 2.APPL Sale 100ZK 21/08/24\n 3.APPL Purchase 200ZK 15/08/24\n 4. View More Pending Requests 5.Back",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123456",
+        "requestType": "GET"
+      },
+      ...
+      {
+        "option": 4,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING&page=2",
+        "requestType": "GET"
+      },
+      {
+        "option": 5,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Paging requests view
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING&page=2
+    ...
+```
+
+<Note>
+  The response will be similar to the [request by status
+  view](#get-requests-by-status)
+</Note>
+
+#### Individual request view
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123456
+    ...
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Request details:\n APPL Purchase 200ZK 21/08/24\n 1. Cancel request\n 2. Back",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123456&cancelMode=true",
+        "requestType": "GET"
+      },
+      {
+        "option": 2,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Enabling cancel mode
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123456&cancelMode=true
+    ...
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Cancel request:\n APPL Purchase 200ZK 21/08/24\n…(pipevest.com/terms)\n 1. Confirm \n 2. Back",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123456&cancelMode=true",
+        "requestType": "PUT"
+      },
+      {
+        "option": 2,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Confirming order cancel request
+
+<Note>
+  See the guide on [confirming cancel order
+  requests](/guides/ussd/cancel-request)
+</Note>
+
+#### Query parameters
+
+| query        | Definition                                                                | Required |
+| ------------ | ------------------------------------------------------------------------- | -------- |
+| `customerId` | The unique customer identifer                                             | `Yes`    |
+| `page`       | The current set of viewable requests. Default `1`                         | `No`     |
+| `cancelMode` | Returns a view that prompts the user to cancel a request. Default `false` | `No`     |
+| `requestId`  | The unique request identifer                                              | `No`     |
+| `status`     | The current request status                                                | `No`     |
+
+### Requests View Example
+
+<Card
+  title="USSD Requests View"
+  icon="paper-plane"
+  href="https://www.figma.com/proto/xkSZwzsNTpYDNQiG0QGRlu/Zamtel-USSD-Flow?node-id=108-902&t=7ty9x1l3kywQhWlB-0&scaling=min-zoom&content-scaling=fixed&page-id=72%3A258&starting-point-node-id=108%3A69&show-proto-sidebar=1"
+  horizontal
+>
+  Check out an example of the ussd requests view
+</Card>
+```

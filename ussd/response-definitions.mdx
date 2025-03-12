@@ -1,0 +1,72 @@
+---
+title: "Response Data Definitions"
+---
+
+Each endpoint returns a standardized set of data. Below are their definitions and usage.
+
+## Top-level Data
+
+| Key           | Definition                                                                           | Required |
+| ------------- | ------------------------------------------------------------------------------------ | -------- |
+| `ussdMessage` | A string that contains the display message that should be shown to the user.         | `Yes`    |
+| `ussdOptions` | An array of objects that contains the mapping of the options available to the user.  | `No`     |
+| `ussdConfirm` | An object that contains details to confirm a request when options are not available. | `No`     |
+
+<Tip>
+  Data payloads can either contain `ussdOptions` and/or `ussdConfirm`. At least
+  one of the objects will be returned with each response.
+</Tip>
+
+#### ussdOptions
+
+A `ussdOption` object gives you the details of the option order, the request url to confirm the option and the type of request to make.
+
+**Example payload:**
+
+```json
+{
+  "ussdMessage": "Select an investment option:\n 1. Stocks\n 2. My Portfolio\n 3. Back",
+  "ussdOptions": [
+    {
+      "option": 1,
+      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/instruments?customerId=123456",
+      "requestType": "GET"
+    },
+    {
+      "option": 2,
+      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456",
+      "requestType": "GET"
+    }
+  ]
+}
+```
+
+| Key           | Definition                                            |
+| ------------- | ----------------------------------------------------- |
+| `option`      | The order of the option chosen by the user            |
+| `requestUrl`  | The url endpoint to call to confirm the chosen option |
+| `requestType` | The request type to used to make the request          |
+
+#### uusdConfirm
+
+The `ussdConfirm` object is returned for the following reasons:
+
+1. There are no options available for the user interaction.
+2. The user has to manual input some value (ex: purchase amount, searching stock symbol, etc...)
+
+**Example payload:**
+
+```json
+{
+  "ussdMessage": "Zamtel Message\n Your asset purchase request has been delivered. You will receive a confirmation shortly.",
+  "ussdConfirm": {
+    "requestUrl": "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456",
+    "requestType": "GET"
+  }
+}
+```
+
+| Key           | Definition                                                      |
+| ------------- | --------------------------------------------------------------- |
+| `requestUrl`  | The url endpoint to call to return the user to a specified view |
+| `requestType` | The request type to used to make the request                    |

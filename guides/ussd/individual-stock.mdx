@@ -1,0 +1,151 @@
+---
+title: "Individual Stock View"
+---
+
+The individual stocks view contains the available operations/options for a given stock.
+
+<Frame>
+  <img className="block dark:hidden" src="/images/ussd-individual-stock.png" />
+  <img
+    className="hidden dark:block"
+    src="/images/ussd-individual-stock-dark.png"
+  />
+</Frame>
+
+### Accessing the individual stock view
+
+<Note>
+  In the example request below, the user has chosen `option 1` from the [stocks
+  menu view](/guides/ussd/stocks#accessing-the-stocks-view)
+</Note>
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL
+    --header 'Authorization: Bearer 123456' \
+    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
+    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
+    --header 'X-Client-Id: 123456' \
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Purchase stock:\n Asset: Apple (APPL)\n Market Price: 7000 ZK\n Yields: +7.0% (6M)\n 1. 100ZK\n 2. 500 ZK\n 3. 1000 ZK\n 4. Input Amount\n 5. View More Details\n 6. Back\n",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&amount=100",
+        "requestType": "GET"
+      },
+      ...
+      {
+        "option": 4,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&inputMode=true",
+        "requestType": "GET"
+      },
+      {
+        "option": 5,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&detailMode=true",
+        "requestType": "GET"
+      },
+      {
+        "option": 6,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Enabling input purchase mode
+
+Returns a view that prompts the user to input the stock purchase amount.
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&inputMode=true
+    ...
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "Input stock purchase amount\\n 1. Back\n",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
+        "requestType": "GET"
+      }
+    ],
+    "ussdConfirm": {
+      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&amount={amount}",
+      "requestType": "GET"
+    }
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+<Tip>
+  When confirming the stock input purchase amount, `{amount}` in the url must be
+  swapped with the user input.
+</Tip>
+
+#### Enabling detail mode
+
+Returns a more detailed view of the stock details.
+
+```bash
+  curl --request GET \
+    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&detailMode=true
+    ...
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "ussdMessage": "More Details:\n Asset: Apple (AAPL)\n Current Value: 5800 ZK\n Value range over time\n 1D%….ALL: +30.5%\n 1. Back\n",
+    "ussdOptions": [
+      {
+        "option": 1,
+        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
+        "requestType": "GET"
+      }
+    ]
+  },
+  "code": 200,
+  "message": "Success"
+}
+```
+
+#### Query parameters
+
+| query        | Definition                                                                                  | Required |
+| ------------ | ------------------------------------------------------------------------------------------- | -------- |
+| `customerId` | The unique customer identifer                                                               | `Yes`    |
+| `symbol`     | The stock symbol                                                                            | `Yes`    |
+| `inputMode`  | Returns a view that prompts the user to input the stock purchase amount. Default is `false` | `No`     |
+| `detailMode` | Returns a more detailed view of the stock details. Default is `false`                       | `No`     |
+
+### Stocks View Example
+
+<Card
+  title="USSD Individual Stock View"
+  icon="box"
+  href="https://www.figma.com/proto/xkSZwzsNTpYDNQiG0QGRlu/Zamtel-USSD-Flow?node-id=108-387&t=7ty9x1l3kywQhWlB-0&scaling=min-zoom&content-scaling=fixed&page-id=72%3A258&starting-point-node-id=108%3A69&show-proto-sidebar=1"
+  horizontal
+>
+  Check out an example of the ussd individual stock view
+</Card>

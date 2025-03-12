@@ -1,0 +1,78 @@
+---
+title: "Overview"
+---
+
+The base urls for `staging` and `production` are as follows:
+
+| Environment  | Base Url                              |
+| ------------ | ------------------------------------- |
+| `Staging`    | `https://api.staging.pipevest.com/v1` |
+| `Production` | `https://api.pipevest.com/v1`         |
+
+<Note>
+  Only the [authentication endpoints](/api-reference/ussd/authentication)
+  leverage these urls directly. The rest of the endpoints require the [USSD base
+  url](#ussd-base-url).
+</Note>
+
+## USSD Base Url
+
+After authenticating and receiving an access token, requests to the USSD api can be made at the given urls:
+
+| Environment  | Base Url                                   |
+| ------------ | ------------------------------------------ |
+| `Staging`    | `https://api.staging.pipevest.com/v1/ussd` |
+| `Production` | `https://api.pipevest.com/v1/ussd`         |
+
+## Using Authenticated Endpoints
+
+All API endpoints are authenticated using [OAuth 2.0](https://oauth.net/2/) standards. A `clientId` and `clientSecret`
+must be exchanged for a shortlived access token. This access token is then used to authenticate further requests.
+
+<Steps>
+  <Step title="Access Token Request">
+    ```bash
+      curl --request POST \
+        --url https://api.staging.pipevest.com/v1/auth \
+        --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
+        --header 'Content-Length: 18' \
+        --header 'Content-Type: application/x-www-form-urlencoded' \
+        --header 'Signature: ...' \
+        --header 'Signature-Input: ...' \
+        --data 'clientId=<client-id>'
+        --data 'clientSecret=<client-secret>'
+    ```
+  </Step>
+  <Step title="Authenticate Requests with Token">
+    <Tip>The access token is passed into the authorization header as a bearer token</Tip>
+
+    ```bash
+      curl --request GET \
+        --url https://api.staging.pipevest.com/v1/ussd/home \
+        --header 'Authorization: Bearer <access-token>' \
+        --header 'Signature: ...' \
+        --header 'Signature-Input: ...' \
+        --header 'X-Client-Id: <client-id>' \
+    ```
+
+  </Step>
+</Steps>
+
+<CardGroup col={2}>
+  <Card
+    title="Authentication Concepts"
+    icon="user-shield"
+    href="/concepts/authentication"
+    horizontal
+  >
+    Check out the auth mechanisms used to keep the API secure
+  </Card>
+  <Card
+    title="Authentication Guide"
+    icon="book"
+    href="/guides/authentication"
+    horizontal
+  >
+    Understand how to create and revoke auth tokens
+  </Card>
+</CardGroup>
