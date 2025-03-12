@@ -57,8 +57,8 @@
         "icon": "mobile-retro",
         "pages": [
           "ussd/overview",
-          "ussd/example-flow",
           "ussd/response-definitions",
+          "ussd/example-flow",
           {
             "group": "Guides",
             "pages": [
