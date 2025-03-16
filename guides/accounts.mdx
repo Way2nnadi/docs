@@ -3,7 +3,7 @@ title: "Accounts"
 icon: "building-columns"
 ---
 
-An account for each organization default [Investment Type](/guides/investments) is created when a customer is created.
+An account for each organization's default [Investment Type](/guides/investments) is created when a customer is created.
 There is a `1 to 1` mapping between investment types and accounts. Meaning, for each investment type that a customer can access,
 there can **only** exist one account for it.
 
@@ -40,7 +40,7 @@ To create an account:
     --header 'X-Client-Id: 123456' \
     --header 'X-Idempotency-Key: 123456' \
     ...
-    --data '{"customerId": 123456, "currency": "ZK", "investmentTypes": "INTERNATIONAL_STOCKS"}'
+    --data '{"customerId": 123456, "currency": "ZMW", "investmentTypes": "INTERNATIONAL_STOCKS"}'
 ```
 
 <Warning>

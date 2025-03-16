@@ -71,9 +71,9 @@ This is especially important when using the `ALL` subscription.
 | ---------------------- | -------------------------------------------------------------------------------------------------------- |
 | High Level + Low Level | Subscribe to all the events within the high level domain but only that low level event within its domain |
 | `ALL` + Low level      | Subscribe to all events in the system but only that low level event with its domain                      |
-| `ALL` + High level     | Sames as just subscribing to `ALL`                                                                       |
-| High Level             | Only subscribe to all the events within the high level domain                                            |
-| Low Level              | Only Subscribe just that low level event with its domain                                                 |
+| `ALL` + High level     | Same as subscribing to `ALL`                                                                             |
+| High Level             | Only subscribes to all the events within the high level domain                                           |
+| Low Level              | Only subscribes to the low level event within its domain                                                 |
 
 ## Default Subscription
 
@@ -103,7 +103,7 @@ The payload should look similar to this:
 
 ## Updating Subsubscriptons
 
-Subscriptions can be update be making a `PUT` request to [/webhooks](/api-reference/endpoint/webhooks/update)
+Subscriptions can be updated by making a `PUT` request to [/webhooks](/api-reference/endpoint/webhooks/update)
 
 ```bash
   curl --request PUT \
@@ -120,5 +120,5 @@ Subscriptions can be update be making a `PUT` request to [/webhooks](/api-refere
 ```
 
 <Warning>
-  Updaing the list of `subscriptions` will replace the previous subscriptions.
+  Updating the list of `subscriptions` will replace the previous subscriptions.
 </Warning>

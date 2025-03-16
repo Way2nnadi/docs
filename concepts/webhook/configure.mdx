@@ -10,7 +10,7 @@ title: "Configuration and Payload"
 
 <Steps>
   <Step title="Define Webook Url">
-    1. Webhook urls must be a valid HTTPS urls
+    1. Webhook urls must be a valid HTTPS url
     2. The host of the url must be a DNS name and not an IP address
 
     <Tip>
@@ -63,12 +63,12 @@ Successfully, configuring a webhook will have the following additional results:
 
 The webhook payload is composed of the following:
 
-| Name        | Definition                                                                    |
-| ----------- | ----------------------------------------------------------------------------- |
-| `eventId`   | Unique event identifier. Should be used to dedup potentially duplicate events |
-| `event`     | The event type. Example: `ACCOUNT`                                            |
-| `createdAt` | Unix timestamp of when the event was created                                  |
-| `data`      | The data associated with the event                                            |
+| Name        | Definition                                                                          |
+| ----------- | ----------------------------------------------------------------------------------- |
+| `eventId`   | Unique event identifier. Should be used to deduplicate potentially duplicate events |
+| `event`     | The event type. Example: `ACCOUNT`                                                  |
+| `createdAt` | Unix timestamp of when the event was created                                        |
+| `data`      | The data associated with the event                                                  |
 
 #### Example Payload
 
@@ -84,7 +84,7 @@ In the example below, an account was been created within the system.
     "customerId": 123456,
     "status": "ACTIVE",
     "investmentType": "INTERNATIONAL_STOCKS",
-    "currency": "ZK",
+    "currency": "ZMW",
     "createdAt": 1732893584,
     "updatedAt": 1732893584
   }

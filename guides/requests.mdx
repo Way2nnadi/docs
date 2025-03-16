@@ -32,7 +32,7 @@ There are 2 types of requests:
     --header 'X-Client-Id: 123456' \
     --header 'X-Idempotency-Key: 123456' \
     ...
-    --data '{"customerId": 123456, "currency": "ZK", "instrumentId": 123456, "purchaseAmount": 100 }'
+    --data '{"customerId": 123456, "currency": "ZMW", "instrumentId": 123456, "purchaseAmount": 100 }'
 ```
 
 #### Sell Request
@@ -46,7 +46,7 @@ There are 2 types of requests:
   curl --request POST \
     --url https://api.pipevest.com/v1/requests/purchase/sell\
     ...
-    --data '{"customerId": 123456, "currency": "ZK", "assetId": 123456, "sellAmount": 100 }'
+    --data '{"customerId": 123456, "currency": "ZMW", "assetId": 123456, "sellAmount": 100 }'
 ```
 
 <Note>Instead of `sellAmount`, a `sellPercentage` can be provided.</Note>

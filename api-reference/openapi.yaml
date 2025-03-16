@@ -1242,7 +1242,7 @@ components:
         description: |
           Base64 encoded sha-512 hash of the http message body.
 
-          This key isn not required for `GET` and `DELETE` requests.
+          This key isn't not required for `GET` and `DELETE` requests.
 
           [Learn how to generate content digest](/concepts/http-signature/content-digest)
       required: true
@@ -1299,7 +1299,7 @@ components:
         description: |
           Unique identifier passed into each a mutable request (i.e `POST`, `PUT`, `PATCH`, `DELETE`)
 
-          This key isn not required for `GET` requests
+          This key isn't not required for `GET` requests
       required: true
   schemas:
     # Entity Units
