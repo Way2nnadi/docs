@@ -108,8 +108,8 @@
               {
                 "group": "Authentication",
                 "pages": [
-                  "api-reference/ussd/authentication/create",
-                  "api-reference/ussd/authentication/delete"
+                  "api-reference/endpoint/authentication/create",
+                  "api-reference/endpoint/authentication/delete"
                 ]
               },
               {
