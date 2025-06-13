@@ -281,7 +281,6 @@
 		"light": "/logo/light3.svg",
 		"dark": "/logo/dark3.svg"
 	},
-	"icons": { "library": "lucide" },
 	"navbar": {
 		"links": [
 			{
