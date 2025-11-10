@@ -77,12 +77,8 @@
 								"icon": "box"
 							},
 							{
-								"group": "Requests",
-								"pages": [
-									"guides/ussd/requests",
-									"guides/ussd/confirm-request",
-									"guides/ussd/cancel-request"
-								],
+								"group": "Pending Requests",
+								"pages": ["guides/ussd/requests", "guides/ussd/cancel-request"],
 								"icon": "paper-plane"
 							},
 							{
@@ -106,39 +102,12 @@
 						"group": "API Reference",
 						"pages": [
 							{
-								"group": "Authentication",
-								"pages": [
-									"api-reference/endpoint/authentication/create",
-									"api-reference/endpoint/authentication/delete"
-								]
+								"group": "Session",
+								"pages": ["api-reference/ussd/session/create"]
 							},
 							{
-								"group": "Home",
-								"pages": ["api-reference/ussd/home/get"]
-							},
-							{
-								"group": "Stocks",
-								"pages": ["api-reference/ussd/stocks/get"]
-							},
-							{
-								"group": "Requests",
-								"pages": [
-									"api-reference/ussd/requests/get",
-									"api-reference/ussd/requests/create",
-									"api-reference/ussd/requests/update"
-								]
-							},
-							{
-								"group": "Portfolio",
-								"pages": ["api-reference/ussd/portfolio/get"]
-							},
-							{
-								"group": "Assets",
-								"pages": ["api-reference/ussd/assets/get"]
-							},
-							{
-								"group": "Transactions",
-								"pages": ["api-reference/ussd/transactions/get"]
+								"group": "Process",
+								"pages": ["api-reference/ussd/process/create"]
 							}
 						]
 					}
@@ -174,7 +143,7 @@
 								"group": "Authentication",
 								"pages": [
 									"api-reference/endpoint/authentication/create",
-									"api-reference/endpoint/authentication/delete"
+									"api-reference/endpoint/authentication/revoke"
 								]
 							},
 							{

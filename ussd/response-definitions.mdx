@@ -2,71 +2,177 @@
 title: "Response Data Definitions"
 ---
 
-Each endpoint returns a standardized set of data. Below are their definitions and usage.
+Each USSD endpoint returns a standardized response structure. Below are their definitions and usage.
 
-## Top-level Data
+## Response Structure
 
-| Key           | Definition                                                                           | Required |
-| ------------- | ------------------------------------------------------------------------------------ | -------- |
-| `ussdMessage` | A string that contains the display message that should be shown to the user.         | `Yes`    |
-| `ussdOptions` | An array of objects that contains the mapping of the options available to the user.  | `No`     |
-| `ussdConfirm` | An object that contains details to confirm a request when options are not available. | `No`     |
-
-<Tip>
-  Data payloads can either contain `ussdOptions` and/or `ussdConfirm`. At least
-  one of the objects will be returned with each response.
-</Tip>
-
-#### ussdOptions
-
-A `ussdOption` object gives you the details of the option order, the request url to confirm the option and the type of request to make.
-
-**Example payload:**
+All USSD endpoints return a response with the following top-level structure:
 
 ```json
 {
-  "ussdMessage": "Select an investment option:\n 1. Stocks\n 2. My Portfolio\n 3. Back",
-  "ussdOptions": [
-    {
-      "option": 1,
-      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/instruments?customerId=123456",
-      "requestType": "GET"
+  "message": "USSD session created successfully",
+  "data": {
+    "sessionId": "ussd_3278668b308502f3a562950fc8043028",
+    "currentState": "HOME",
+    "menu": {
+      "state": "HOME",
+      "text": "Select an investment option:",
+      "options": [
+        {
+          "key": "1",
+          "label": "Stocks",
+          "nextState": "STOCKS"
+        },
+        {
+          "key": "2",
+          "label": "My Portfolio",
+          "nextState": "MY_PORTFOLIO"
+        }
+      ],
+      "isEndState": false
     },
-    {
-      "option": 2,
-      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456",
-      "requestType": "GET"
-    }
-  ]
-}
-```
-
-| Key           | Definition                                            |
-| ------------- | ----------------------------------------------------- |
-| `option`      | The order of the option chosen by the user            |
-| `requestUrl`  | The url endpoint to call to confirm the chosen option |
-| `requestType` | The request type to used to make the request          |
-
-#### uusdConfirm
-
-The `ussdConfirm` object is returned for the following reasons:
-
-1. There are no options available for the user interaction.
-2. The user has to manually input some value (ex: purchase/sell amount, searching stock symbol, etc...)
-
-**Example payload:**
-
-```json
-{
-  "ussdMessage": "Zamtel Message\n Your asset purchase request has been delivered. You will receive a confirmation shortly.",
-  "ussdConfirm": {
-    "requestUrl": "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456",
-    "requestType": "GET"
+    "ussdText": "Select an investment option:\n\n1. Stocks\n2. My Portfolio",
+    "expiresAt": "2025-11-06T14:38:12.202Z"
   }
 }
 ```
 
-| Key           | Definition                                                      |
-| ------------- | --------------------------------------------------------------- |
-| `requestUrl`  | The url endpoint to call to return the user to a specified view |
-| `requestType` | The request type used to make the request                       |
+## Top-level Data
+
+| Key          | Definition                                                                           | Required |
+| ------------ | ------------------------------------------------------------------------------------ | -------- |
+| `message`    | A string message indicating the result of the operation                              | `Yes`    |
+| `data`       | An object containing the session and menu information                               | `Yes`    |
+
+## Data Object
+
+The `data` object contains the session information and menu structure:
+
+| Key            | Definition                                                                           | Required |
+| -------------- | ------------------------------------------------------------------------------------ | -------- |
+| `sessionId`    | Unique identifier for the USSD session                                             | `Yes`    |
+| `currentState` | The current state of the session (e.g., "HOME", "STOCKS", "MY_PORTFOLIO")          | `Yes`    |
+| `menu`         | An object containing the menu structure with options                                | `Yes`    |
+| `ussdText`     | The formatted USSD text to display to the user                                      | `Yes`    |
+| `expiresAt`    | The expiration timestamp of the session (ISO 8601 format)                           | `Yes`    |
+
+## Menu Object
+
+The `menu` object contains the menu structure and available options:
+
+| Key          | Definition                                                                           | Required |
+| ------------ | ------------------------------------------------------------------------------------ | -------- |
+| `state`       | The current menu state (e.g., "HOME", "STOCKS")                                    | `Yes`    |
+| `text`        | The menu text to display to the user                                                | `Yes`    |
+| `options`     | An array of menu options available to the user                                      | `Yes`    |
+| `isEndState` | A boolean indicating whether this is an end state (session terminates if true)      | `Yes`    |
+
+## Menu Options
+
+Each option in the `options` array is a `MenuOption` object:
+
+| Key        | Definition                                                                           | Required |
+| ---------- | ------------------------------------------------------------------------------------ | -------- |
+| `key`      | The option key that the user can select (e.g., "1", "2", or "Tesla", "Apple")      | `Yes`    |
+| `label`    | The display label for the option                                                    | `Yes`    |
+| `nextState`| The next state to transition to when this option is selected (optional)            | `No`     |
+| `data`     | Optional additional data associated with the option (e.g., stock information)      | `No`     |
+
+### MenuOption Examples
+
+**Simple option with next state:**
+```json
+{
+  "key": "1",
+  "label": "Stocks",
+  "nextState": "STOCKS"
+}
+```
+
+**Option without next state (e.g., "Next Page"):**
+```json
+{
+  "key": "7",
+  "label": "Next Page"
+}
+```
+
+**Option with additional data (stock information):**
+```json
+{
+  "key": "1",
+  "label": "AAPL",
+  "nextState": "SELECT_STOCK",
+  "data": {
+    "stockId": "cmhkp4jkw0005zxfok9m0kiwg",
+    "symbol": "AAPL",
+    "name": "Apple Inc."
+  }
+}
+```
+
+## Complete Example Response
+
+**Example: Stocks menu response**
+```json
+{
+  "message": "USSD request processed successfully",
+  "data": {
+    "sessionId": "ussd_3278668b308502f3a562950fc8043028",
+    "currentState": "STOCKS",
+    "menu": {
+      "state": "STOCKS",
+      "text": "Select Stock:",
+      "options": [
+        {
+          "key": "1",
+          "label": "AAPL",
+          "nextState": "SELECT_STOCK",
+          "data": {
+            "stockId": "cmhkp4jkw0005zxfok9m0kiwg",
+            "symbol": "AAPL",
+            "name": "Apple Inc."
+          }
+        },
+        {
+          "key": "2",
+          "label": "AMZN",
+          "nextState": "SELECT_STOCK",
+          "data": {
+            "stockId": "cmhkp4kcp0008zxfohlxjtvd7",
+            "symbol": "AMZN",
+            "name": "Amazon.com Inc."
+          }
+        },
+        {
+          "key": "7",
+          "label": "Next Page"
+        },
+        {
+          "key": "8",
+          "label": "Search Stock",
+          "nextState": "SEARCH_STOCK"
+        },
+        {
+          "key": "0",
+          "label": "Back to Home",
+          "nextState": "HOME"
+        }
+      ],
+      "isEndState": false
+    },
+    "ussdText": "Select Stock:\n\n1. AAPL\n2. AMZN\n7. Next Page\n8. Search Stock\n0. Back to Home",
+    "expiresAt": "2025-11-06T14:38:12.202Z"
+  }
+}
+```
+
+<Tip>
+  The `ussdText` field contains a pre-formatted string that can be directly displayed to the user. 
+  The `menu` object provides structured data for programmatic handling of options and state transitions.
+</Tip>
+
+<Tip>
+  When `isEndState` is `true`, the session will terminate after displaying the message. 
+  No further user interaction is expected in this case.
+</Tip>

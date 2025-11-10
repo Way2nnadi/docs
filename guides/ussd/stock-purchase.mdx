@@ -7,6 +7,85 @@ The stock purchase view allows the user to confirm an amount to purchase for a g
 This flow is particularily important given that a `POST` request must be made in order to create
 the purchase order request.
 
+
+
+<Frame>
+  <img className="block dark:hidden" src="/images/ussd-individual-stock.png" />
+  <img
+    className="hidden dark:block"
+    src="/images/ussd-individual-stock-dark.png"
+  />
+</Frame>
+
+### Accessing the stock purchase view
+
+Pass `1` as the option key to the `choice` parameter.
+
+```bash
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=1'
+```
+
+**Example Response**
+
+```json
+{
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+        "currentState": "BUY_STOCK",
+        "menu": {
+            "state": "BUY_STOCK",
+            "text": "Buy Apple Inc. (AAPL)\n\nSelect amount to invest:",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "ZK22.00",
+                    "nextState": "PURCHASE_CONFIRMATION",
+                    "data": {
+                        "amount": 22
+                    }
+                },
+                {
+                    "key": "2",
+                    "label": "ZK112.00",
+                    "nextState": "PURCHASE_CONFIRMATION",
+                    "data": {
+                        "amount": 112
+                    }
+                },
+                {
+                    "key": "3",
+                    "label": "ZK562.00",
+                    "nextState": "PURCHASE_CONFIRMATION",
+                    "data": {
+                        "amount": 562
+                    }
+                },
+                {
+                    "key": "4",
+                    "label": "Enter custom amount",
+                    "nextState": "ENTER_CUSTOM_PURCHASE_AMOUNT"
+                },
+                {
+                    "key": "0",
+                    "label": "Back",
+                    "nextState": "SELECT_STOCK"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Buy Apple Inc. (AAPL)\n\nSelect amount to invest:\n\n1. ZK22.00\n2. ZK112.00\n3. ZK562.00\n4. Enter custom amount\n0. Back",
+        "expiresAt": "2025-11-06T14:58:33.942Z"
+    }
+}
+```
+
+#### Confirming order purchase request
+
 <Frame>
   <img
     className="block dark:hidden"
@@ -22,55 +101,46 @@ the purchase order request.
   />
 </Frame>
 
-### Accessing the stock purchase view
+<Tip>This is the menu that is displayed once the customer has chosen to purchase a stock.
+From here the customer can choose to confirm the purchase or go back to the individual stock menu.</Tip>
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&amount=100
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=1'
 ```
-
-**Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Confirm stock purchase:\n Press “1” to confirm purchase and agree to terms and conditions(pipevest.com/terms)\n 1. Confirm purchase: 100 ZK of APPL\n 2. Back\n",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL&orderType=PURCHASE",
-        "requestType": "POST"
-      },
-      {
-        "option": 2,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
-        "requestType": "GET"
-      }
-    ]
-  },
-  "code": 200,
-  "message": "Success"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+        "currentState": "PURCHASE_CONFIRMATION",
+        "menu": {
+            "state": "PURCHASE_CONFIRMATION",
+            "text": "Confirm stock purchase:\n\nStock: Apple Inc. (AAPL)\nAmount: ZK22.00\n\nPress \"1\" to confirm purchase and agree to terms and conditions (pipevest.com/terms).",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "Confirm",
+                    "nextState": "PURCHASE_SUCCESS"
+                },
+                {
+                    "key": "0",
+                    "label": "Back",
+                    "nextState": "BUY_STOCK"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Confirm stock purchase:\n\nStock: Apple Inc. (AAPL)\nAmount: ZK22.00\n\nPress \"1\" to confirm purchase and agree to terms and conditions (pipevest.com/terms).\n\n1. Confirm\n0. Back",
+        "expiresAt": "2025-11-06T14:58:33.942Z"
+    }
 }
 ```
 
-#### Confirming order purchase request
-
-<Note>
-  See the guide on [confirming purchase order
-  requests](/guides/ussd/confirm-request)
-</Note>
-
-#### Query parameters
-
-| query        | Definition                    | Required |
-| ------------ | ----------------------------- | -------- |
-| `customerId` | The unique customer identifer | `Yes`    |
-| `symbol`     | The stock symbol              | `Yes`    |
-| `amount`     | The stock purchase amount     | `No`     |
 
 ### Stock Purchase Example
 

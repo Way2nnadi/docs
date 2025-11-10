@@ -12,57 +12,57 @@ The portfolio view allows users to see their assets, review pending order reques
 ### Accessing the Portfolio View
 
 <Tip>
-  Make a `GET` request to [/portfolio](/api-reference/ussd/portfolio/get)
+  This request is made from the `Home` menu view.
 </Tip>
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=2'
 ```
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "My portfolio:\n 1.View my assets\n 2.Pending requests (TSLA)\n 3.Transaction history\n 4.Back",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456",
-        "requestType": "GET"
-      },
-      {
-        "option": 2,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING",
-        "requestType": "GET"
-      },
-      {
-        "option": 3,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456",
-        "requestType": "GET"
-      },
-      {
-        "option": 4,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456",
-        "requestType": "GET"
-      }
-    ]
-  },
-  "code": 200,
-  "message": "Success"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_2231df057f1f8f5269f0a268249ac104",
+        "currentState": "MY_PORTFOLIO",
+        "menu": {
+            "state": "MY_PORTFOLIO",
+            "text": "My Portfolio",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "View Assets",
+                    "nextState": "VIEW_ASSETS"
+                },
+                {
+                    "key": "2",
+                    "label": "Pending Requests",
+                    "nextState": "PENDING_REQUESTS"
+                },
+                {
+                    "key": "3",
+                    "label": "Transaction History",
+                    "nextState": "TRANSACTION_HISTORY"
+                },
+                {
+                    "key": "0",
+                    "label": "Back to Home",
+                    "nextState": "HOME"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "My Portfolio\n\n1. View Assets\n2. Pending Requests\n3. Transaction History\n0. Back to Home",
+        "expiresAt": "2025-11-10T14:56:05.356Z"
+    }
 }
 ```
-
-#### Query parameters
-
-| query        | Definition                    | Required |
-| ------------ | ----------------------------- | -------- |
-| `customerId` | The unique customer identifer | `Yes`    |
 
 ### Portfolio View Example
 

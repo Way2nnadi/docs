@@ -11,178 +11,28 @@ servers:
 security:
   - BearerAuth: []
 paths:
-  /assets:
+
+  /session:
     parameters:
       - $ref: "#/components/parameters/Signature"
       - $ref: "#/components/parameters/SignatureInput"
       - $ref: "#/components/parameters/XCliendId"
-    get:
-      tags:
-        - Assets
-      summary: Returns the assets menu.
-      parameters:
-        - $ref: "#/components/parameters/CustomerIdParam"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/AssetIdParams"
-        - $ref: "#/components/parameters/DetailModeParam"
-      responses:
-        "200":
-          description: Asset menu options and respective details
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Success"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/AssetMenu"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  /home:
-    parameters:
-      - $ref: "#/components/parameters/Signature"
-      - $ref: "#/components/parameters/SignatureInput"
-      - $ref: "#/components/parameters/XCliendId"
-    get:
-      tags:
-        - Home
-      summary: Returns the home menu.
-      parameters:
-        - $ref: "#/components/parameters/CustomerIdParam"
-      responses:
-        "200":
-          description: Home menu options and respective details
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Success"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/HomeMenu"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  /portfolio:
-    parameters:
-      - $ref: "#/components/parameters/Signature"
-      - $ref: "#/components/parameters/SignatureInput"
-      - $ref: "#/components/parameters/XCliendId"
-    get:
-      tags:
-        - Portfolio
-      summary: Returns portfolio menu
-      parameters:
-        - $ref: "#/components/parameters/CustomerIdParam"
-      responses:
-        "200":
-          description: Portfolio menu and options details
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Success"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/PortfolioMenu"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  /requests:
-    parameters:
-      - $ref: "#/components/parameters/Signature"
-      - $ref: "#/components/parameters/SignatureInput"
-      - $ref: "#/components/parameters/XCliendId"
-    get:
-      tags:
-        - Requests
-      summary: Returns view of customer requests
-      parameters:
-        - $ref: "#/components/parameters/CustomerIdParam"
-        - $ref: "#/components/parameters/CancelModeParam"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/RequestIdParam"
-        - $ref: "#/components/parameters/OrderStatusParam"
-      responses:
-        "200":
-          description: Requests view and options details
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Success"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/RequestsMenu"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
     post:
       tags:
-        - Requests
-      summary: Creates an order request
+        - Session
+      summary: Creates a customer session
       parameters:
-        - $ref: "#/components/parameters/ContentDigest"
         - $ref: "#/components/parameters/CustomerIdParam"
-        - $ref: "#/components/parameters/OrderTypeParam"
-        - in: query
-          name: symbol
-          required: true
-          schema:
-            $ref: "#/components/schemas/InstrumentSymbol"
-
       requestBody:
-        description: Details used to create an order request
+        description: Details used to create a customer session
         required: true
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
-              $ref: "#/components/schemas/CreateOrderRequest"
-      responses:
-        "201":
-          description: Order requests menu details
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Created"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/RequestsOrderMenu"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-    put:
-      tags:
-        - Requests
-      summary: Updates order request
-      parameters:
-        - $ref: "#/components/parameters/ContentDigest"
-        - $ref: "#/components/parameters/CustomerIdParam"
-        - in: query
-          name: requestId
-          required: true
-          schema:
-            $ref: "#/components/schemas/RequestId"
-        - in: query
-          name: cancelMode
-          required: true
-          schema:
-            $ref: "#/components/schemas/CancelMode"
+              $ref: "#/components/schemas/CreateSession"
       responses:
         "200":
-          description: Order requests menu details
+          description: Customer session created successfully
           content:
             application/json:
               schema:
@@ -191,30 +41,30 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: "#/components/schemas/RequestsOrderUpdateMenu"
+                        $ref: "#/components/schemas/Session"
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  /stocks:
+  /process:
     parameters:
       - $ref: "#/components/parameters/Signature"
       - $ref: "#/components/parameters/SignatureInput"
       - $ref: "#/components/parameters/XCliendId"
-    get:
+    post:
       tags:
-        - Stocks
-      summary: Returns stocks view.
+        - Process
+      summary: Processes a customer's ussd request
       parameters:
         - $ref: "#/components/parameters/CustomerIdParam"
-        - $ref: "#/components/parameters/AmountParam"
-        - $ref: "#/components/parameters/InputModeParam"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/SearchModeParam"
-        - $ref: "#/components/parameters/SymbolParam"
+      requestBody:
+        description: Details used to process a customer's ussd request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessRequest"
       responses:
         "200":
-          description: Stocks menu options and respective details
+          description: USSD request processed successfully
           content:
             application/json:
               schema:
@@ -223,72 +73,73 @@ paths:
                   - type: object
                     properties:
                       data:
-                        $ref: "#/components/schemas/InstrumentsMenu"
-
+                        $ref: "#/components/schemas/ProcessResponse"
+              examples:
+                stocksMenu:
+                  summary: Stocks menu response
+                  value:
+                    message: "USSD request processed successfully"
+                    data:
+                      sessionId: "ussd_3278668b308502f3a562950fc8043028"
+                      currentState: "STOCKS"
+                      menu:
+                        state: "STOCKS"
+                        text: "Select Stock:"
+                        options:
+                          - key: "1"
+                            label: "AAPL"
+                            nextState: "SELECT_STOCK"
+                            data:
+                              stockId: "cmhkp4jkw0005zxfok9m0kiwg"
+                              symbol: "AAPL"
+                              name: "Apple Inc."
+                          - key: "2"
+                            label: "AMZN"
+                            nextState: "SELECT_STOCK"
+                            data:
+                              stockId: "cmhkp4kcp0008zxfohlxjtvd7"
+                              symbol: "AMZN"
+                              name: "Amazon.com Inc."
+                          - key: "3"
+                            label: "GOOGL"
+                            nextState: "SELECT_STOCK"
+                            data:
+                              stockId: "cmhkp4juc0006zxfo52azbrvo"
+                              symbol: "GOOGL"
+                              name: "Alphabet Inc."
+                          - key: "4"
+                            label: "JPM"
+                            nextState: "SELECT_STOCK"
+                            data:
+                              stockId: "cmhkp4ldl000czxfoqdqmzur8"
+                              symbol: "JPM"
+                              name: "JPMorgan Chase & Co."
+                          - key: "5"
+                            label: "META"
+                            nextState: "SELECT_STOCK"
+                            data:
+                              stockId: "cmhkp4kv7000azxfoi6s5yw7j"
+                              symbol: "META"
+                              name: "Meta Platforms Inc."
+                          - key: "7"
+                            label: "Next Page"
+                          - key: "8"
+                            label: "Search Stock"
+                            nextState: "SEARCH_STOCK"
+                          - key: "0"
+                            label: "Back to Home"
+                            nextState: "HOME"
+                        isEndState: false
+                      ussdText: "Select Stock:\n\n1. AAPL\n2. AMZN\n3. GOOGL\n4. JPM\n5. META\n7. Next Page\n8. Search Stock\n0. Back to Home"
+                      expiresAt: "2025-11-06T14:38:12.202Z"
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-  /transactions:
-    parameters:
-      - $ref: "#/components/parameters/Signature"
-      - $ref: "#/components/parameters/SignatureInput"
-      - $ref: "#/components/parameters/XCliendId"
-    get:
-      tags:
-        - Transactions
-      summary: Returns transactions menu
-      parameters:
-        - $ref: "#/components/parameters/CustomerIdParam"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/AssetIdParam"
-      responses:
-        "200":
-          description: transactione menu and options detail
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Success"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/TransactionMenu"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-api-key
     BearerAuth:
       type: http
       scheme: bearer
   responses:
-    OK:
-      description: The request succeeded
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Success"
-    NotFound:
-      description: The specified resource was not found
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/Error"
-              - type: object
-                properties:
-                  code:
-                    type: string
-                    example: 404
-                  message:
-                    type: string
-                    example: Not Found
     Unauthorized:
       description: Unauthorized
       content:
@@ -296,21 +147,6 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
   parameters:
-    AmountParam:
-      in: query
-      name: amount
-      schema:
-        $ref: "#/components/schemas/OrderAmount"
-    AssetIdParam:
-      in: query
-      name: assetId
-      schema:
-        $ref: "#/components/schemas/AssetId"
-    CancelModeParam:
-      in: query
-      name: cancelMode
-      schema:
-        $ref: "#/components/schemas/CancelMode"
     CustomerIdParam:
       in: query
       name: customerId
@@ -318,54 +154,6 @@ components:
       example: 123456
       schema:
         $ref: "#/components/schemas/CustomerId"
-    ContentDigest:
-      in: header
-      name: Content-Digest
-      schema:
-        type: string
-        example: "sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:"
-        description: |
-          Base64 encoded sha-512 hash of the http message body.
-
-          This key isn't not required for `GET` and `DELETE` requests.
-
-          [Learn how to generate content digest](/concepts/http-signature/content-digest)
-      required: true
-    DetailModeParam:
-      in: query
-      name: detail
-      schema:
-        $ref: "#/components/schemas/DetailMode"
-    InputModeParam:
-      in: query
-      name: inputMode
-      schema:
-        $ref: "#/components/schemas/InputMode"
-    LimitParam:
-      in: query
-      name: limit
-      schema:
-        $ref: "#/components/schemas/Limit"
-    OrderStatusParam:
-      in: query
-      name: status
-      schema:
-        $ref: "#/components/schemas/OrderStatus"
-    PageParam:
-      in: query
-      name: page
-      schema:
-        $ref: "#/components/schemas/Page"
-    RequestIdParam:
-      in: query
-      name: requestId
-      schema:
-        $ref: "#/components/schemas/RequestId"
-    SearchModeParam:
-      in: query
-      name: searchMode
-      schema:
-        $ref: "#/components/schemas/SearchMode"
     Signature:
       in: header
       name: Signature
@@ -382,23 +170,12 @@ components:
       name: Signature-Input
       schema:
         type: string
-        example: 'sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584'
+        example: 'sig1=("Content-Type" "Content-Digest"...expires=<expires>'
         description: |
           An ordered list of components that make up the signature base. It is used to recompute and verify the `Signature`
 
           [Learn how signatures work](/concepts/http-signature/message-signature)
       required: true
-    SymbolParam:
-      in: query
-      name: symbol
-      schema:
-        $ref: "#/components/schemas/InstrumentSymbol"
-    OrderTypeParam:
-      in: query
-      name: orderType
-      required: true
-      schema:
-        $ref: "#/components/schemas/OrderType"
     XCliendId:
       in: header
       name: X-Client-Id
@@ -406,273 +183,138 @@ components:
         $ref: "#/components/schemas/ClientId"
       example: client-id
       required: true
-    XIdempotencyKey:
-      in: header
-      name: X-Idempotency-Id
-      schema:
-        type: string
-        example: 01937261-e216-754f-99ba-c1170d65dd28
-        description: |
-          Unique identifier passed into each a mutable request (i.e `POST`, `PUT`, `PATCH`, `DELETE`)
-
-          This key isn't not required for `GET` requests
-      required: true
   schemas:
-    # Entity Units
-    AccessToken:
-      description: Client shortlived access token. TTL of `60 mins`
-      type: string
-      example: 01937261-e216-754f-99ba-c1170d65dd28
-    AccessTokenExpiresIn:
-      description: A token's current TTL
-      type: integer
-      example: 123
-    AccessTokenId:
-      description: Unique access token identifier
-      type: integer
-      example: 123456
-    AccessTokenMaxTTL:
-      description: A token's max time to TTL
-      type: integer
-      example: 123
-    AccessTokenType:
-      description: A token's authorization type
-      type: string
-      example: Bearer
-    AccessTokenScope:
-      description: The authorization scopes associated with token
-      enum: [read, write]
-      example: [read, write]
-    AccountId:
-      description: Unique account identifier
-      type: integer
-      example: 123456
-    AccountStatus:
-      description: Current status of the account
-      enum: [ACTIVE, SUSPENDED, CLOSED]
-      example: ACTIVE
-    AssetName:
-      description: The display name of the asset
-      type: string
-      example: Apple Inc.
-    AssetSymbol:
-      description: The symbol associated by the asset
-      type: string
-      example: APPL
-    AvailablePosition:
-      description: The quantity of the asset currently available for trading
-      type: integer
-      example: 5
-    CancelRequest:
-      description: Determine whether to cancel a request
-      type: boolean
-      example: true
+    Choice:
+      description: The choice made by the customer (can be an integer like 1, 2, 3, 4 or a string like "Tesla", "Apple", "Gold")
+      oneOf:
+        - type: integer
+          example: 1
+        - type: string
+          example: "Tesla"
     ClientId:
       description: Unique identifier assigned to the client
       type: string
       example: client-id
-    ClientSecret:
-      description: Private passcode shared with the client
-      type: string
-      example: client-secret
-    CountCurrent:
-      description: Total number of results returned with a request
-      type: integer
-      example: 100
-    CountTotal:
-      description: Total number of returnable results
-      type: integer
-      example: 1000
-    CreatedAt:
-      description: Created at unix timestamp
-      type: integer
-      example: 1234567890
-    Currency:
-      description: Associated currency
-      enum: [USD, EUR, ZK]
-      example: ZK
-
-    CustomerStatus:
-      description: Current status of the customer
-      enum: [ACTIVE, SUSPENDED, CLOSED]
-      example: ACTIVE
-    Email:
-      description: A valid email
-      type: string
-      example: reports@companyx.com
-    EndDate:
-      description: Market data end date as UNIX timestamp
-      type: integer
-      example: 1234567890
-    FirstName:
-      description: The customers first name
-      type: string
-      example: John
-    FractionalEnabled:
-      description: Determines whether the instrument can be fractionally traded
-      type: boolean
-      example: true
-    InstrumentId:
-      description: Unique instrument identifier
+    CustomerId:
+      description: Unique customer identifier
       type: integer
       example: 123456
-    InstrumentOpen:
-      description: Instrument opening trade value
-      type: integer
-      example: 500.00
-    InstrumentHigh:
-      description: Instrument highest trade value
-      type: integer
-      example: 1000.00
-    InstrumentLow:
-      description: Instrument lowest trade value
-      type: integer
-      example: 200.00
-    InstrumentClose:
-      description: Instrument closing trade value
-      type: integer
-      example: 200.00
-    InstrumentName:
-      description: The display name of the instrument
-      type: string
-      example: Apple Inc.
-    InstrumentSymbol:
-      description: The symbol associated to an instrument
-      type: string
-      example: AAPL
-    InstrumentVolume:
-      description: Instrument trade volume
-      type: integer
-      example: 200.00
-    InvestmentAmount:
-      description: The total amount invested into an asset or group of assets
-      type: integer
-      example: 1550.00
-    InvestmentId:
-      description: Unique investment identifier
-      type: integer
-      example: 123456
-    InvestmentType:
-      description: |
-        Investment type associated with the account
-
-        Currently only `INTERNATIONAL_STOCKS` is available
-        More options will be available in the near future
-
-        Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `CRYPTO`]
-      type: string
-      enum: [INTERNATIONAL_STOCKS]
-      example: INTERNATIONAL_STOCKS
-    IsAvailable:
-      description: Determines whether the instrument is available for trading
-      type: boolean
-      example: true
-    IsRecurring:
-      description: |
-        Determines whether the request should be in recurring mode
-
-        Defaults to `false`
-
-        Refer to [Requests documentation](/guides/requests#recurring-requests) to better understand how recurring works
-      type: boolean
-      example: false
-    LastName:
-      description: The customers last name
-      type: string
-      example: Knox
-    Limit:
-      description: The maximum numbers of items to return.
-      type: integer
-      minimum: 1
-      maximum: 1000
-      default: 100
-      example: 100
-    LockedPosition:
-      description: The quantity of the asset currently locked in for trading
-      type: integer
-      example: 5
-    MarketDataId:
-      description: Unique market data identifier
-      type: integer
-      example: 123456
-    MarketPrice:
-      description: The current market price of 1 unit of the asset
-      type: integer
-      example: 550.00
-    MarketValue:
-      description: The current market value of an asset or group of assets
-      type: integer
-      example: 11550.00
-    Page:
-      description: The page offset for the items returned
-      type: integer
-      minimum: 0
-      example: 0
-    PercentChange:
-      description: The change percent change
-      type: integer
-      example: 1.5
-    Performance:
-      description: |
-        The performance of all the assets under the portfolio.
-
-        This value is represented as a percentage increase or decrease over the lifetime of the portfolio
-      type: integer
-      example: 151.00
-    PortfolioId:
-      description: Unique portfolio identifier
-      type: integer
-      example: 123456
-    PortfolioStatus:
-      description: Current status of the portfolio
-      enum: [ACTIVE, SUSPENDED, CLOSED]
-      example: ACTIVE
-    Position:
-      description: The total quantity of the asset currently owned by the customer
-      type: integer
-      example: 10
-    PurchaseAmount:
-      description: The total purchase amount for an instrument
-      type: integer
-      example: 1550.00
-    PurchasePrice:
-      description: The value of 1 unit of the asset during initial purchase
-      type: integer
-      example: 500.00
-    PublicKey:
-      description: Cryptographic key used for verifying http message signatures
-      type: string
-      example: ssh-ed25519 DDDDC3NzaC1lZDI1NTE5DDDFIH0qa5TtbV3FwK7EcQDTyhbrzzRGol9sjK9L0lhk56Iu test@companyx.com
-    ReferenceId:
-      description: Externally provided unique identifier
-      type: integer
-      example: 123456
-
-    RequestStatus:
-      description: The status of the request
-      enum: [PENDING, COMPLETED, CANCELED, ERROR]
-      example: PENDING
-    # RequestType:
-    #   description: The type of request being made
-    #   enum: [SELL, PURCHASE]
-    #   example: PURCHASE
-    ReportId:
-      description: Unique report identifier
-      type: integer
-      example: 123456
-    ReportStatus:
-      description: Current status of the report
-      enum: [PROCESSING, COMPLETED, ERROR]
-      example: PROCESSING
-    ReportType:
-      description: The type of report
-      enum: [USER, TRANSACTION, REGULATORY]
-      example: REGULATORY
-    ReportTypes:
-      type: array
-      description: List of report types
-      items:
-        $ref: "#/components/schemas/ReportType"
+    CreateSession:
+      type: object
+      properties:
+        customerId:
+          $ref: "#/components/schemas/CustomerId"
+      required:
+        - customerId
+    MenuOption:
+      type: object
+      description: A menu option with key, label, optional next state, and optional data
+      properties:
+        key:
+          type: string
+          description: The option key (e.g., "1", "2", or "Tesla", "Apple")
+          example: "1"
+        label:
+          type: string
+          description: The display label for the option
+          example: "Stocks"
+        nextState:
+          type: string
+          description: The next state to transition to (optional, some options like "Next Page" may not have this)
+          example: "STOCKS"
+        data:
+          type: object
+          description: Optional additional data associated with the option (e.g., stock information)
+          properties:
+            stockId:
+              type: string
+              description: Unique stock identifier
+              example: "cmhkp4jkw0005zxfok9m0kiwg"
+            symbol:
+              type: string
+              description: Stock symbol
+              example: "AAPL"
+            name:
+              type: string
+              description: Stock name
+              example: "Apple Inc."
+          example:
+            stockId: "cmhkp4jkw0005zxfok9m0kiwg"
+            symbol: "AAPL"
+            name: "Apple Inc."
+      required:
+        - key
+        - label
+    Menu:
+      type: object
+      description: The menu structure with state, text, options, and end state flag
+      properties:
+        state:
+          type: string
+          description: The current menu state
+          example: "HOME"
+        text:
+          type: string
+          description: The menu text to display
+          example: "Select an investment option:"
+        options:
+          type: array
+          description: Array of menu options
+          items:
+            $ref: "#/components/schemas/MenuOption"
+          example:
+            - key: "1"
+              label: "Stocks"
+              nextState: "STOCKS"
+            - key: "2"
+              label: "My Portfolio"
+              nextState: "MY_PORTFOLIO"
+        isEndState:
+          type: boolean
+          description: Whether this is an end state (session terminates)
+          example: false
+      required:
+        - state
+        - text
+        - options
+        - isEndState
+    ProcessRequest:
+      type: object
+      properties:
+        sessionId:
+          $ref: "#/components/schemas/SessionId"
+        choice:
+          $ref: "#/components/schemas/Choice"
+      required:
+        - sessionId
+        - choice
+    ProcessResponse:
+      type: object
+      description: The USSD process request response data
+      properties:
+        sessionId:
+          $ref: "#/components/schemas/SessionId"
+        currentState:
+          type: string
+          description: The current state of the session after processing
+          example: "STOCKS"
+        menu:
+          $ref: "#/components/schemas/Menu"
+        ussdText:
+          type: string
+          description: The formatted USSD text to display to the user
+          example: "Select Stock:\n\n1. AAPL\n2. AMZN\n3. GOOGL\n4. JPM\n5. META\n7. Next Page\n8. Search Stock\n0. Back to Home"
+        expiresAt:
+          type: string
+          format: date-time
+          description: The expiration timestamp of the session
+          example: "2025-11-06T14:38:12.202Z"
+      required:
+        - sessionId
+        - currentState
+        - menu
+        - ussdText
+        - expiresAt
     ResponseCode:
       description: Request response code
       type: string
@@ -681,1152 +323,37 @@ components:
       description: Request response message
       type: string
       example: Success
-    SellAmount:
-      description: The total amount to sell from an asset or group of assets
-      type: integer
-      example: 1550.00
-    SellPercentage:
-      description: The percentage amount to sell from an asset or group of assets
-      type: integer
-      example: 50.0
-    Schedule:
-      description: |
-        The recurring schedule in which the asset should be purchased or sold.
-
-        Defaults to `ONCE`
-      enum: [ONCE, DAILY, WEEKLY, BI_WEEKLY, MONTHLY]
-      example: ONCE
-    Sort:
-      description: |
-        The date order in which to sort the items
-
-        This currently only works to sort `createdAt`.
-      enum: [ASC, DESC]
-      example: ASC
-    StartDate:
-      description: Market data start date as UNIX timestamp
-      type: integer
-      example: 1234567890
-    TimeFrame:
-      description: The time frames used to determine instrument market data
-      enum: [1D, 5D, 3M, 6M, YTD, 1Y, 5Y, ALL]
-      example: 1D
-    TransactionAmount:
-      description: The amount for the transaction
-      type: integer
-      example: 500.00
-    TransactionId:
-      description: Unique transaction identifier
-      type: integer
-      example: 123456
-    TransactionStatus:
-      description: The status for the transaction
-      enum: [PENDING, COMPLETED, CANCELED, ERROR]
-      example: COMPLETED
-    TrustedIpAddress:
-      description: An ip address whitelisted for this client
+    Session:
+      type: object
+      description: The USSD session response data
+      properties:
+        sessionId:
+          $ref: "#/components/schemas/SessionId"
+        currentState:
+          type: string
+          description: The current state of the session
+          example: "HOME"
+        menu:
+          $ref: "#/components/schemas/Menu"
+        ussdText:
+          type: string
+          description: The formatted USSD text to display to the user
+          example: "Select an investment option:\n\n1. Stocks\n2. My Portfolio"
+        expiresAt:
+          type: string
+          format: date-time
+          description: The expiration timestamp of the session
+          example: "2025-11-06T14:38:12.202Z"
+      required:
+        - sessionId
+        - currentState
+        - menu
+        - ussdText
+        - expiresAt
+    SessionId:
+      description: Unique session identifier
       type: string
-      example: 123.123.123.123
-    TrustedIpAddresses:
-      description: The list of ip addresses whitelisted for this client
-      type: array
-      items:
-        $ref: "#/components/schemas/TrustedIpAddress"
-    UpdatedAt:
-      description: Updated at unix timestamp
-      type: integer
-      example: 1234567890
-    ValueChangeSummary:
-      description: Human readable summary for the instrument value change
-      type: string
-      example: Asset has changed by 1.5% over the past 1 day
-    WebhookId:
-      description: The unique webhook identifier
-      type: integer
-      example: 123456
-    WebhookStatus:
-      description: The status of the webhook
-      enum: [ACTIVE, DEACTIVED]
-      example: ACTIVE
-    WebhookSubscription:
-      description: A webhook subscription
-      enum:
-        [
-          ALL,
-          ACCOUNT,
-          ACCOUNT.CREATED,
-          ACCOUNT.UPDATED,
-          ASSET,
-          ASSET.CREATED,
-          ASSET.ADD_TO_PORTFOLIO,
-          ASSET.UPDATED,
-          CUSTOMER,
-          CUSTOMER.CREATED,
-          CUSTOMER.UPDATED,
-          INSTRUMENT,
-          INSTRUMENT.CREATED,
-          INSTRUMENT.UPDATED,
-          INVESTMENT,
-          INVESTMENT.CREATED,
-          INVESTMENT.UPDATED,
-          PORTFOLIO,
-          PORTFOLIO.CREATED,
-          PORTFOLIO.UPDATED,
-          REQUEST,
-          REQUEST.CREATED,
-          REQUEST.UPDATED,
-          REPORT,
-          TRANSACTION,
-        ]
-      example: ALL
-    WebhookSubscriptions:
-      type: array
-      description: |
-        Refer to [Webhook documentation](/concepts/webhook/subscriptions) to understand how subscriptions work.
-      items:
-        $ref: "#/components/schemas/WebhookSubscription"
-    WebhookUrl:
-      description: A valid https url
-      type: string
-      example: https://companyx.com/webhooks
-
-    #
-    #
-    # Updated Components
-    AssetId:
-      description: Unique asset identifier
-      type: integer
-      example: 123456
-    CancelMode:
-      description: Set cancel mode
-      type: boolean
-      example: true
-    CustomerId:
-      description: Unique customer identifier
-      type: integer
-      example: 123456
-    DetailMode:
-      description: Set detail mode
-      type: boolean
-      example: true
-    InputMode:
-      description: Set input mode
-      type: boolean
-      example: true
-    Option:
-      description: A menu option order number
-      type: integer
-      example: 1
-    OrderAmount:
-      description: The total order request amount
-      type: integer
-      example: 100.00
-    OrderStatus:
-      description: The status of the order request
-      enum: [PENDING, COMPLETED, CANCELED, ERROR]
-      example: PENDING
-    OrderType:
-      description: The order request type
-      enum: [PURCHASE, SELL]
-      example: PURCHASE
-    RequestId:
-      description: Unique request identifier
-      type: integer
-      example: 123456
-    SearchMode:
-      description: Set search mode
-      type: boolean
-      example: true
-    UssdMessage:
-      description: The current view message
-      type: string
-      example: Select an investment option:\n 1. Stocks\n 2. My Portfolio\n 3. Back
-    RequestUrl:
-      description: A menu option request url
-      type: string
-      example: https://api.staging.pipevest.com/v1/ussd/instruments
-    RequestType:
-      description: A menu option request type
-      type: string
-      example: GET
-
-    # Entity Components
-    AssetMenu:
-      type: object
-      description: The assets menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: My investments:\n 1.Apple (APPL)\n 2.Tesla (TSLA)\n 3.Microsoft (MSFT)\n 4. Coco-cola (KO)\n 5. View More Assets\n 6.Back
-        ussdOptions:
-          $ref: "#/components/schemas/AssetsMenuOptions"
-      required:
-        - ussdMessage
-        - ussdOptions
-    AssetsMenuOptions:
-      type: array
-      items:
-        $ref: "#/components/schemas/UssdOption"
-      example:
-        - option: 1
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&assetId=123456"
-          requestType: "GET"
-        - option: 2
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&assetId=123457"
-          requestType: "GET"
-        - option: 3
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&assetId=123458"
-          requestType: "GET"
-        - option: 4
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&assetId=123459"
-          requestType: "GET"
-        - option: 5
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&page=2"
-          requestType: "GET"
-        - option: 6
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456"
-          requestType: "GET"
-    CreateOrderRequest:
-      type: object
-      properties:
-        amount:
-          $ref: "#/components/schemas/OrderAmount"
-      required:
-        - amount
-    HomeMenu:
-      type: object
-      description: The home menu details
-      properties:
-        ussdMessage:
-          $ref: "#/components/schemas/UssdMessage"
-        ussdOptions:
-          $ref: "#/components/schemas/HomeMenuOptions"
-      required:
-        - ussdMessage
-        - ussdOptions
-    HomeMenuOptions:
-      type: array
-      items:
-        $ref: "#/components/schemas/UssdOption"
-      example:
-        - option: 1
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456"
-          requestType: "GET"
-        - option: 2
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456"
-          requestType: "GET"
-    InstrumentsMenu:
-      type: object
-      description: The instruments menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: Select Stock\n 1.Apple (AAPL)\n 2. Tesla (TSLA)\n 3. Microsoft (MSFT)\n 4. Nike (NKE) 5. Coca-Cola (KO) 6. View More Stocks 7. Search Stock Symbol 8. Back
-        ussdOptions:
-          $ref: "#/components/schemas/InstrumentMenuOptions"
-      required:
-        - ussdMessage
-        - ussdOptions
-    InstrumentMenuOptions:
-      type: array
-      items:
-        $ref: "#/components/schemas/UssdOption"
-      example:
-        - option: 1
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL"
-          requestType: "GET"
-        - option: 2
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=TSLA"
-          requestType: "GET"
-        - option: 3
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=MSFT"
-          requestType: "GET"
-        - option: 4
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=NKE"
-          requestType: "GET"
-        - option: 5
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=KO"
-          requestType: "GET"
-        - option: 6
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&page=2"
-          requestType: "GET"
-        - option: 7
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&searchMode=true"
-          requestType: "GET"
-        - option: 8
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456"
-          requestType: "GET"
-    RequestsMenu:
-      type: object
-      description: The requests menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: Pending requests:\n Select a request to view more details about the investment 1.APPL Purchase 200ZK 21/08/24\n 2.APPL Sale 100ZK 21/08/24\n 3.APPL Purchase 200ZK 15/08/24\n 4. View More Pending Requests 5.Back
-        ussdOptions:
-          $ref: "#/components/schemas/RequestsMenuOptions"
-      required:
-        - ussdMessage
-        - ussdOptions
-    PortfolioMenu:
-      type: object
-      description: The portfolio menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: My portfolio:\n 1.View my assets\n 2.Pending requests (TSLA)\n 3.Transaction history\n 4.Back
-        ussdOptions:
-          $ref: "#/components/schemas/PortfolioMenuOptions"
-      required:
-        - ussdMessage
-        - ussdOptions
-    PortfolioMenuOptions:
-      type: array
-      items:
-        $ref: "#/components/schemas/UssdOption"
-      example:
-        - option: 1
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456"
-          requestType: "GET"
-        - option: 2
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING"
-          requestType: "GET"
-        - option: 3
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456"
-          requestType: "GET"
-        - option: 4
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456"
-          requestType: "GET"
-    RequestsMenuOptions:
-      type: array
-      items:
-        $ref: "#/components/schemas/UssdOption"
-      example:
-        - option: 1
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123456"
-          requestType: "GET"
-        - option: 2
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123457"
-          requestType: "GET"
-        - option: 3
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&requestId=123458"
-          requestType: "GET"
-        - option: 4
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&status=PENDING&page=2"
-          requestType: "GET"
-        - option: 5
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456"
-          requestType: "GET"
-    RequestsOrderMenu:
-      type: object
-      description: The requests order menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: Zamtel Message\n Your asset purchase request has been delivered. You will receive a confirmation shortly.
-        ussdConfirm:
-          $ref: "#/components/schemas/UssdConfirm"
-      required:
-        - ussdMessage
-        - ussdConfirm
-    RequestsOrderUpdateMenu:
-      type: object
-      description: The update requests order menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: Zamtel Message\n Your asset cancel request has been delivered. You will receive a confirmation shortly.
-        ussdConfirm:
-          allOf:
-            - $ref: "#/components/schemas/UssdConfirm"
-              example:
-                requestUrl: "https://api.staging.pipevest.com/v1/ussd/rquests?customerId=123456&status=PENDING"
-                requestType: GET
-      required:
-        - ussdMessage
-        - ussdConfirm
-    TransactionMenu:
-      type: object
-      description: The transacitons menu details
-      properties:
-        ussdMessage:
-          allOf:
-            - $ref: "#/components/schemas/UssdMessage"
-            - example: Transaction History\n Apple (AAPL) Purchase 200 ZK 12/08/24\n… 1. View More Transactions\n 2.Back
-        ussdOptions:
-          $ref: "#/components/schemas/TransactionMenuOptions"
-      required:
-        - ussdMessage
-        - ussdOptions
-    TransactionMenuOptions:
-      type: array
-      items:
-        $ref: "#/components/schemas/UssdOption"
-      example:
-        - option: 1
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456&page=2"
-          requestType: "GET"
-        - option: 2
-          requestUrl: "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456"
-          requestType: "GET"
-    UssdConfirm:
-      type: object
-      description: The detials of a menu confirmation
-      properties:
-        requestUrl:
-          $ref: "#/components/schemas/RequestUrl"
-        requestType:
-          $ref: "#/components/schemas/RequestType"
-      required:
-        - requestUrl
-        - requestType
-    UssdOption:
-      type: object
-      description: The detials of menu option
-      properties:
-        option:
-          $ref: "#/components/schemas/Option"
-        requestUrl:
-          $ref: "#/components/schemas/RequestUrl"
-        requestType:
-          $ref: "#/components/schemas/RequestType"
-      required:
-        - option
-        - requestUrl
-        - requestType
-
-    Account:
-      type: object
-      description: A customer account
-      properties:
-        accountId:
-          $ref: "#/components/schemas/AccountId"
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        status:
-          $ref: "#/components/schemas/AccountStatus"
-        investmentType:
-          $ref: "#/components/schemas/InvestmentType"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - accountId
-        - customerId
-        - status
-        - investmentType
-        - currency
-        - createdAt
-        - updatedAt
-    Asset:
-      type: object
-      properties:
-        assetId:
-          $ref: "#/components/schemas/AssetId"
-        instrumentId:
-          $ref: "#/components/schemas/InstrumentId"
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        name:
-          $ref: "#/components/schemas/AssetName"
-        symbol:
-          $ref: "#/components/schemas/AssetSymbol"
-        investmentAmount:
-          $ref: "#/components/schemas/InvestmentAmount"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        position:
-          $ref: "#/components/schemas/Position"
-        locked:
-          $ref: "#/components/schemas/LockedPosition"
-        available:
-          $ref: "#/components/schemas/AvailablePosition"
-        purchasePrice:
-          $ref: "#/components/schemas/PurchasePrice"
-        marketPrice:
-          $ref: "#/components/schemas/MarketPrice"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - assetId
-        - instrumentId
-        - customerId
-        - name
-        - symbol
-        - investmentAmount
-        - schedule
-        - position
-        - locked
-        - available
-        - purchasePrice
-        - marketPrice
-        - createdAt
-        - updatedAt
-    Auth:
-      type: object
-      description: Details of the authenticated token request
-      properties:
-        accessTokenId:
-          $ref: "#/components/schemas/AccessTokenId"
-        accessToken:
-          $ref: "#/components/schemas/AccessToken"
-        expiresIn:
-          $ref: "#/components/schemas/AccessTokenExpiresIn"
-        maxTTL:
-          $ref: "#/components/schemas/AccessTokenMaxTTL"
-        type:
-          $ref: "#/components/schemas/AccessTokenType"
-        scope:
-          $ref: "#/components/schemas/AccessTokenScope"
-        trustedIps:
-          $ref: "#/components/schemas/TrustedIpAddresses"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - accessTokenId
-        - accessToken
-        - expiresIn
-        - maxTTL
-        - type
-        - scope
-        - trustedIps
-        - createdAt
-        - updatedAt
-    CreateAccount:
-      type: object
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        investmentTypes:
-          description: |
-            Defaults to `INTERNATIONAL_STOCKS` if no specified investment type
-
-            Currently only `INTERNATIONAL_STOCKS` is available
-            More options will be available in the near future
-
-            Future Options: [`COMMODITY`, `BONDS`, `LOCAL_STOCKS`, `FOREIGN_EXCHANGE`, `CRYPTO`]
-          type: array
-          items:
-            $ref: "#/components/schemas/InvestmentType"
-      required:
-        - customerId
-        - currency
-    CreateAuthToken:
-      type: object
-      properties:
-        clientId:
-          $ref: "#/components/schemas/ClientId"
-        clientSecret:
-          $ref: "#/components/schemas/ClientSecret"
-      required:
-        - clientId
-        - clientSecret
-    CreateCustomer:
-      type: object
-      properties:
-        firstName:
-          $ref: "#/components/schemas/FirstName"
-        lastName:
-          $ref: "#/components/schemas/LastName"
-        referenceId:
-          $ref: "#/components/schemas/ReferenceId"
-      required:
-        - firstName
-        - lastName
-    CreatePortfolio:
-      type: object
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        currency:
-          description: |
-            Currency associated with the Portfolio
-
-            Defaults to `USD`
-          $ref: "#/components/schemas/Currency"
-      required:
-        - customerId
-    CreatePortofolioAsset:
-      type: object
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        portfolioId:
-          $ref: "#/components/schemas/PortfolioId"
-        assetId:
-          $ref: "#/components/schemas/AssetId"
-      required:
-        - customerId
-        - portfolioId
-        - assetId
-    CreateReport:
-      type: object
-      description: |
-        Report Payload
-
-        Refer to [Report documentation](https://docs.pipevest.com) to understand how reports work
-      properties:
-        reportTypes:
-          $ref: "#/components/schemas/ReportTypes"
-        url:
-          $ref: "#/components/schemas/WebhookUrl"
-        email:
-          $ref: "#/components/schemas/Email"
-      required:
-        - reportTypes
-    CreateRequestPurchase:
-      type: object
-      description: Purchase Request Payload
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        instrumentId:
-          $ref: "#/components/schemas/InstrumentId"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        purchaseAmount:
-          $ref: "#/components/schemas/PurchaseAmount"
-        isRecurring:
-          $ref: "#/components/schemas/IsRecurring"
-        schedule:
-          $ref: "#/components/schemas/Schedule"
-      required:
-        - customerId
-        - instrumentId
-        - purchaseAmount
-        - currency
-    CreateRequestSell:
-      type: object
-      description: Sell Request Payload
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        assetId:
-          $ref: "#/components/schemas/AssetId"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        sellAmount:
-          description: |
-            The total amount to sell from an asset or group of assets
-
-            Not requried, if `sellPercentage` is specified
-          $ref: "#/components/schemas/SellAmount"
-        sellPercentage:
-          description: |
-            The percentage amount to sell
-
-            Not requried, if `sellAmount` is specified
-          $ref: "#/components/schemas/SellPercentage"
-        isRecurring:
-          $ref: "#/components/schemas/IsRecurring"
-        schedule:
-          $ref: "#/components/schemas/Schedule"
-      required:
-        - customerId
-        - assetId
-        - currency
-    CreateWebhook:
-      type: object
-      properties:
-        url:
-          $ref: "#/components/schemas/WebhookUrl"
-        subscriptions:
-          $ref: "#/components/schemas/WebhookSubscriptions"
-      required:
-        - url
-        - subscriptions
-    Customer:
-      type: object
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        firstName:
-          $ref: "#/components/schemas/FirstName"
-        lastName:
-          $ref: "#/components/schemas/LastName"
-        status:
-          $ref: "#/components/schemas/CustomerStatus"
-        referenceId:
-          $ref: "#/components/schemas/ReferenceId"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - customerId
-        - firstName
-        - lastName
-        - status
-        - referenceId
-        - createdAt
-        - updatedAt
-    Instrument:
-      type: object
-      properties:
-        instrumentId:
-          $ref: "#/components/schemas/InstrumentId"
-        name:
-          $ref: "#/components/schemas/InstrumentName"
-        symbol:
-          $ref: "#/components/schemas/InstrumentSymbol"
-        investmentId:
-          $ref: "#/components/schemas/InvestmentId"
-        isAvailable:
-          $ref: "#/components/schemas/IsAvailable"
-        valueChangeOverTime:
-          type: array
-          items:
-            $ref: "#/components/schemas/ValueChange"
-        fractionalEnabled:
-          $ref: "#/components/schemas/FractionalEnabled"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - instrumentId
-        - name
-        - symbol
-        - investmentId
-        - isAvailable
-        - createdAt
-        - updatedAt
-    InstrumentType:
-      type: object
-      properties:
-        investmentId:
-          $ref: "#/components/schemas/InvestmentId"
-        investmentType:
-          $ref: "#/components/schemas/InvestmentType"
-        isAvailable:
-          $ref: "#/components/schemas/IsAvailable"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - investmentId
-        - investmentType
-        - isAvailable
-        - createdAt
-        - updatedAt
-    MarketData:
-      type: object
-      properties:
-        marketDataId:
-          $ref: "#/components/schemas/MarketDataId"
-        instrumentId:
-          $ref: "#/components/schemas/InstrumentId"
-        name:
-          $ref: "#/components/schemas/AssetName"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        symbol:
-          $ref: "#/components/schemas/InstrumentSymbol"
-        open:
-          $ref: "#/components/schemas/InstrumentOpen"
-        high:
-          $ref: "#/components/schemas/InstrumentHigh"
-        low:
-          $ref: "#/components/schemas/InstrumentLow"
-        close:
-          $ref: "#/components/schemas/InstrumentClose"
-        volume:
-          $ref: "#/components/schemas/InstrumentVolume"
-        start:
-          $ref: "#/components/schemas/StartDate"
-        end:
-          $ref: "#/components/schemas/EndDate"
-        timeFrame:
-          $ref: "#/components/schemas/TimeFrame"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - marketDataId
-        - instrumentId
-        - name
-        - currency
-        - symbol
-        - open
-        - high
-        - low
-        - close
-        - volume
-        - start
-        - end
-        - timeFrame
-        - createdAt
-        - updatedAt
-    Meta:
-      type: object
-      properties:
-        previousPage:
-          allOf:
-            - $ref: "#/components/schemas/Page"
-            - description: The previous page offset for the items returned
-        currentPage:
-          $ref: "#/components/schemas/Page"
-        nextPage:
-          allOf:
-            - $ref: "#/components/schemas/Page"
-            - description: The next page offset for the items returned
-        limit:
-          $ref: "#/components/schemas/Limit"
-        currentCount:
-          $ref: "#/components/schemas/CountCurrent"
-        totalCount:
-          $ref: "#/components/schemas/CountTotal"
-        sort:
-          allOf:
-            - $ref: "#/components/schemas/Sort"
-            - description: Order for `createdAt` in which the list was returned.
-      required:
-        - previousPage
-        - currentPage
-        - nextPage
-        - limit
-        - currentCount
-        - totalCount
-        - sort
-    Portfolio:
-      type: object
-      description: An investment portfolio
-      properties:
-        portfolioId:
-          $ref: "#/components/schemas/PortfolioId"
-        accountId:
-          $ref: "#/components/schemas/AccountId"
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        investmentAmount:
-          $ref: "#/components/schemas/InvestmentAmount"
-        marketValue:
-          $ref: "#/components/schemas/MarketValue"
-        performance:
-          $ref: "#/components/schemas/Performance"
-        status:
-          $ref: "#/components/schemas/PortfolioStatus"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - portfolioId
-        - currency
-        - investmentAmount
-        - marketValue
-        - performance
-        - status
-        - createdAt
-        - updatedAt
-    PortofolioAsset:
-      type: object
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        portfolioId:
-          $ref: "#/components/schemas/PortfolioId"
-        assetId:
-          $ref: "#/components/schemas/AssetId"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - customerId
-        - portfolioId
-        - assetId
-        - createdAt
-        - updatedAt
-    Report:
-      type: object
-      properties:
-        reportId:
-          $ref: "#/components/schemas/ReportId"
-        reportTypes:
-          $ref: "#/components/schemas/ReportTypes"
-        status:
-          $ref: "#/components/schemas/ReportStatus"
-        url:
-          $ref: "#/components/schemas/WebhookUrl"
-        email:
-          $ref: "#/components/schemas/Email"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - reportId
-        - reportTypes
-        - createdAt
-        - updatedAt
-    Request:
-      anyOf:
-        - $ref: "#/components/schemas/RequestPurchase"
-        - $ref: "#/components/schemas/RequestSell"
-    RequestPurchase:
-      type: object
-      description: Purchase request entity
-      properties:
-        requestId:
-          $ref: "#/components/schemas/RequestId"
-        instrumentId:
-          $ref: "#/components/schemas/InstrumentId"
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        symbol:
-          $ref: "#/components/schemas/InstrumentSymbol"
-        requestType:
-          description: The type of request being made
-          enum: [PURCHASE]
-          example: PURCHASE
-        status:
-          $ref: "#/components/schemas/RequestStatus"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        isRecurring:
-          $ref: "#/components/schemas/IsRecurring"
-        schedule:
-          $ref: "#/components/schemas/Schedule"
-        purchaseAmount:
-          $ref: "#/components/schemas/PurchaseAmount"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - requestId
-        - instrumentId
-        - symbol
-        - requestType
-        - purchaseAmount
-        - status
-        - currency
-        - customerId
-        - isRecurring
-        - schedule
-        - createdAt
-        - updatedAt
-    RequestSell:
-      type: object
-      description: Sell request entity
-      properties:
-        requestId:
-          $ref: "#/components/schemas/RequestId"
-        assetId:
-          $ref: "#/components/schemas/AssetId"
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        symbol:
-          $ref: "#/components/schemas/AssetSymbol"
-        requestType:
-          description: The type of request being made
-          enum: [SELL]
-          example: SELL
-        status:
-          $ref: "#/components/schemas/RequestStatus"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        isRecurring:
-          $ref: "#/components/schemas/IsRecurring"
-        schedule:
-          $ref: "#/components/schemas/Schedule"
-        sellAmount:
-          $ref: "#/components/schemas/SellAmount"
-        sellPercentage:
-          $ref: "#/components/schemas/SellPercentage"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - requestId
-        - assetId
-        - symbol
-        - requestType
-        - status
-        - currency
-        - customerId
-        - isRecurring
-        - schedule
-        - sellAmount
-        - sellPercentage
-        - createdAt
-        - updatedAt
-    Transaction:
-      type: object
-      properties:
-        transactionId:
-          $ref: "#/components/schemas/TransactionId"
-        assetId:
-          $ref: "#/components/schemas/AssetId"
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        amount:
-          $ref: "#/components/schemas/TransactionAmount"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        requestType:
-          $ref: "#/components/schemas/RequestType"
-        status:
-          $ref: "#/components/schemas/TransactionStatus"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - transactionId
-        - assetId
-        - customerId
-        - amount
-        - currency
-        - symbol
-        - requestType
-        - status
-        - createdAt
-        - updatedAt
-    UpdateAccount:
-      type: object
-      properties:
-        accountId:
-          $ref: "#/components/schemas/AccountId"
-        status:
-          $ref: "#/components/schemas/AccountStatus"
-        investmentType:
-          $ref: "#/components/schemas/InvestmentType"
-        currency:
-          $ref: "#/components/schemas/Currency"
-      required:
-        - accountId
-    UpdateCustomer:
-      type: object
-      properties:
-        customerId:
-          $ref: "#/components/schemas/CustomerId"
-        firstName:
-          $ref: "#/components/schemas/FirstName"
-        lastName:
-          $ref: "#/components/schemas/LastName"
-        status:
-          $ref: "#/components/schemas/CustomerStatus"
-        referenceId:
-          $ref: "#/components/schemas/ReferenceId"
-      required:
-        - customerId
-    UpdatePortfolio:
-      type: object
-      properties:
-        portfolioId:
-          $ref: "#/components/schemas/PortfolioId"
-        currency:
-          $ref: "#/components/schemas/Currency"
-        status:
-          $ref: "#/components/schemas/PortfolioStatus"
-      required:
-        - portfolioId
-    UpdateRequest:
-      type: object
-      properties:
-        requestId:
-          $ref: "#/components/schemas/RequestId"
-        shouldCancelRequest:
-          $ref: "#/components/schemas/CancelRequest"
-      required:
-        - requestId
-        - shouldCancelRequest
-    UpdateWebhook:
-      type: object
-      properties:
-        url:
-          $ref: "#/components/schemas/WebhookUrl"
-        subscriptions:
-          $ref: "#/components/schemas/WebhookSubscriptions"
-    ValueChange:
-      type: object
-      description: Instruments performance over a given time period
-      properties:
-        timeFrame:
-          $ref: "#/components/schemas/TimeFrame"
-        percentChange:
-          $ref: "#/components/schemas/PercentChange"
-        summary:
-          $ref: "#/components/schemas/ValueChangeSummary"
-      required:
-        - timeFrame
-        - percentChange
-        - summary
-    Webhook:
-      type: object
-      properties:
-        webhookId:
-          $ref: "#/components/schemas/WebhookId"
-        status:
-          $ref: "#/components/schemas/WebhookStatus"
-        url:
-          $ref: "#/components/schemas/WebhookUrl"
-        subscriptions:
-          $ref: "#/components/schemas/WebhookSubscriptions"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - webhookId
-        - status
-        - url
-        - subscriptions
-        - createdAt
-        - updatedAt
-    WebhookKey:
-      type: object
-      properties:
-        webhookId:
-          $ref: "#/components/schemas/WebhookId"
-        key:
-          $ref: "#/components/schemas/PublicKey"
-        createdAt:
-          $ref: "#/components/schemas/CreatedAt"
-        updatedAt:
-          $ref: "#/components/schemas/UpdatedAt"
-      required:
-        - webhookId
-        - key
-        - createdAt
-        - updatedAt
-
-    # Response Components
-    Created:
-      allOf:
-        - $ref: "#/components/schemas/Success"
-        - type: object
-          properties:
-            code:
-              allOf:
-                - $ref: "#/components/schemas/ResponseCode"
-                - example: 201
-            message:
-              allOf:
-                - $ref: "#/components/schemas/ResponseMessage"
-                - example: Created
+      example: "ussd_3278668b308502f3a562950fc8043028"
     Error:
       type: object
       properties:
@@ -1856,12 +383,3 @@ components:
         - data
         - code
         - message
-    SuccessMeta:
-      allOf:
-        - $ref: "#/components/schemas/Success"
-        - type: object
-          properties:
-            meta:
-              $ref: "#/components/schemas/Meta"
-          required:
-            - meta

@@ -21,46 +21,38 @@ The home menu view is the main ussd view and the start point for end users to in
 
 ### Accessing the Home View
 
-<Tip>Make a `GET` request to [/home](/api-reference/ussd/home/get)</Tip>
-
-```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/home?customerId=123456
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
-```
+<Tip>This is the menu that is displayed once a customer session is created. From here the customer can choose to view stocks or their portfolio.</Tip>
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Select an investment option:\n 1. Stocks\n 2. My Portfolio\n 3. Back",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456",
-        "requestType": "GET"
-      },
-      {
-        "option": 2,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/portfolio?customerId=123456",
-        "requestType": "GET"
-      }
-    ]
-  },
-  "code": 200,
-  "message": "Success"
+    "message": "USSD session created successfully",
+    "data": {
+        "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+        "currentState": "HOME",
+        "menu": {
+            "state": "HOME",
+            "text": "Select an investment option:",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "Stocks",
+                    "nextState": "STOCKS"
+                },
+                {
+                    "key": "2",
+                    "label": "My Portfolio",
+                    "nextState": "MY_PORTFOLIO"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Select an investment option:\n\n1. Stocks\n2. My Portfolio",
+        "expiresAt": "2025-11-06T14:58:33.942Z"
+    }
 }
 ```
-
-#### Query parameters
-
-| query        | Definition                    | Required |
-| ------------ | ----------------------------- | -------- |
-| `customerId` | The unique customer identifer | `Yes`    |
 
 ### Home View Example
 

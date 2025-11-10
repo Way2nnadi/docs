@@ -21,50 +21,51 @@ Canceling a request will immediately close the customer's executable order reque
 
 <Warning>
   It is **highly recommended** that you require the customer to input some sort
-  of security key (i.e. pin, OTP, etc...) before making the `PUT` request to
+  of security key (i.e. pin, OTP, etc...) before making the request to
   cancel an order request.
 </Warning>
 
 ### Canceling an order request
 
-<Tip>
-  Make a `PUT` request to [/requests](/api-reference/ussd/requests/update)
-</Tip>
-
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL&orderType=PURCHASE
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
-    --header 'X-Idempotency-Key: 123456' \
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
     ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=1'
 ```
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Zamtel Message\n Your asset cancel request has been delivered. You will receive a confirmation shortly.",
-    "ussdConfirm": {
-      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL",
-      "requestType": "GET"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_2231df057f1f8f5269f0a268249ac104",
+        "currentState": "CANCEL_REQUEST_CONFIRMATION",
+        "menu": {
+            "state": "CANCEL_REQUEST_CONFIRMATION",
+            "text": "Confirm Order Cancellation:\n\nSELL: AAPL\nAmount: ZK281.51\n\nAre you sure you want to cancel this order?\n",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "Yes, Cancel Order",
+                    "nextState": "CANCEL_ORDER"
+                },
+                {
+                    "key": "0",
+                    "label": "No, Go Back",
+                    "nextState": "PENDING_REQUEST_DETAILS"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Confirm Order Cancellation:\n\nSELL: AAPL\nAmount: ZK281.51\n\nAre you sure you want to cancel this order?\n\n\n1. Yes, Cancel Order\n0. No, Go Back",
+        "expiresAt": "2025-11-10T14:56:05.356Z"
     }
-  },
-  "code": 200,
-  "message": "Success"
 }
 ```
 
-#### Query parameters
-
-| query        | Definition                    | Required |
-| ------------ | ----------------------------- | -------- |
-| `customerId` | The unique customer identifer | `Yes`    |
-| `cancelMode` | Sets request to cancel mode   | `Yes`    |
-| `requestId`  | The unique request identifer  | `Yes`    |
 
 ### Confirm request view example
 

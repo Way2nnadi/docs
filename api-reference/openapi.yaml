@@ -216,7 +216,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-  /auth:
+  /oauth/token:
     parameters:
       - $ref: "#/components/parameters/Signature"
       - $ref: "#/components/parameters/SignatureInput"
@@ -241,17 +241,35 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/Created"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/Auth"
+                $ref: "#/components/schemas/Auth"
+              examples:
+                success:
+                  summary: Successful authentication
+                  value:
+                    message: "Authentication successful"
+                    tokenId: "ffdcf324-5d27-4289-b626-386979e50bae"
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbml6YXRpb25JZCI6ImNtaGx5MXkxbzAwMDJzNjAxY2Y2aXRocm8iLCJjbGllbnRJZCI6Im9yZ19kZGE4MzcxY2U5ZmUxZGEyYmE3OThjZGVkMWU1NjRjYSIsIm9yZ2FuaXphdGlvbk5hbWUiOiJNYWNlamtvdmljLCBEb25uZWxseSBhbmQgS3VobG1hbiIsImlhdCI6MTc2Mjc4Mjk2MSwiZXhwIjoxNzYyNzg2NTYxLCJhdWQiOiJvcmdhbml6YXRpb24tcG9ydGFsIiwiaXNzIjoib3JnYW5pemF0aW9uLWFwaSIsImp0aSI6ImZmZGNmMzI0LTVkMjctNDI4OS1iNjI2LTM4Njk3OWU1MGJhZSJ9.dIq1_o5fCvTdLcQV9NhtN5CQ7qWHUzJt1903E_8t3aA"
+                    expiresIn: 3600
+                    maxTTL: 86400
+                    tokenType: "Bearer"
+                    scope: [READ, WRITE]
+                    trustedIps: []
+                    organization:
+                      id: "cmhly1y1o0002s601cf6ithro"
+                      name: "Macejkovic, Donnelly and Kuhlman"
+                      clientId: "org_dda8371ce9fe1da2ba798cded1e564ca"
+                    createdAt: 1762782961
+                    updatedAt: 1762782961
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-    delete:
+  /oauth/revoke:
+    parameters:
+      - $ref: "#/components/parameters/Signature"
+      - $ref: "#/components/parameters/SignatureInput"
+      - $ref: "#/components/parameters/XIdempotencyKey"
+    post:
       tags:
         - Auth
       summary: Revokes an access token
@@ -1277,7 +1295,7 @@ components:
       name: Signature-Input
       schema:
         type: string
-        example: 'sig1=("Content-Type" "Content-Digest" "Content-Length" "Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584'
+        example: 'sig1=("Content-Type" "Content-Digest"...expires=<expires>'
         description: |
           An ordered list of components that make up the signature base. It is used to recompute and verify the `Signature`
 
@@ -1325,8 +1343,8 @@ components:
       example: Bearer
     AccessTokenScope:
       description: The authorization scopes associated with token
-      enum: [read, write]
-      example: [read, write]
+      enum: [READ, WRITE]
+      example: [READ, WRITE]
     AccountId:
       description: Unique account identifier
       type: integer
@@ -1757,36 +1775,75 @@ components:
         - marketPrice
         - createdAt
         - updatedAt
+    Organization:
+      type: object
+      description: Organization details associated with the token
+      properties:
+        id:
+          type: string
+          description: Unique organization identifier
+          example: "cmhly1y1o0002s601cf6ithro"
+        name:
+          type: string
+          description: Organization name
+          example: "Macejkovic, Donnelly and Kuhlman"
+        clientId:
+          type: string
+          description: Organization client identifier
+          example: "org_dda8371ce9fe1da2ba798cded1e564ca"
+      required:
+        - id
+        - name
+        - clientId
     Auth:
       type: object
       description: Details of the authenticated token request
       properties:
-        accessTokenId:
-          $ref: "#/components/schemas/AccessTokenId"
-        accessToken:
-          $ref: "#/components/schemas/AccessToken"
+        message:
+          type: string
+          description: Authentication response message
+          example: "Authentication successful"
+        tokenId:
+          type: string
+          description: Unique token identifier
+          example: "ffdcf324-5d27-4289-b626-386979e50bae"
+        token:
+          type: string
+          description: JWT access token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbml6YXRpb25JZCI6ImNtaGx5MXkxbzAwMDJzNjAxY2Y2aXRocm8iLCJjbGllbnRJZCI6Im9yZ19kZGE4MzcxY2U5ZmUxZGEyYmE3OThjZGVkMWU1NjRjYSIsIm9yZ2FuaXphdGlvbk5hbWUiOiJNYWNlamtvdmljLCBEb25uZWxseSBhbmQgS3VobG1hbiIsImlhdCI6MTc2Mjc4Mjk2MSwiZXhwIjoxNzYyNzg2NTYxLCJhdWQiOiJvcmdhbml6YXRpb24tcG9ydGFsIiwiaXNzIjoib3JnYW5pemF0aW9uLWFwaSIsImp0aSI6ImZmZGNmMzI0LTVkMjctNDI4OS1iNjI2LTM4Njk3OWU1MGJhZSJ9.dIq1_o5fCvTdLcQV9NhtN5CQ7qWHUzJt1903E_8t3aA"
         expiresIn:
           $ref: "#/components/schemas/AccessTokenExpiresIn"
         maxTTL:
           $ref: "#/components/schemas/AccessTokenMaxTTL"
-        type:
-          $ref: "#/components/schemas/AccessTokenType"
+        tokenType:
+          type: string
+          description: Token type
+          example: "Bearer"
         scope:
-          $ref: "#/components/schemas/AccessTokenScope"
+          type: array
+          description: Authorization scopes associated with token
+          items:
+            type: string
+            enum: [READ, WRITE]
+          example: [READ, WRITE]
         trustedIps:
           $ref: "#/components/schemas/TrustedIpAddresses"
+        organization:
+          $ref: "#/components/schemas/Organization"
         createdAt:
           $ref: "#/components/schemas/CreatedAt"
         updatedAt:
           $ref: "#/components/schemas/UpdatedAt"
       required:
-        - accessTokenId
-        - accessToken
+        - message
+        - tokenId
+        - token
         - expiresIn
         - maxTTL
-        - type
+        - tokenType
         - scope
         - trustedIps
+        - organization
         - createdAt
         - updatedAt
     CreateAccount:

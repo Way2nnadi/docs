@@ -32,7 +32,7 @@ Confirming a request will create an executable order request for the customer wi
 </Tip>
 
 ```bash
-  curl --request GET \
+  curl --request POST \
     --url https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL&orderType=PURCHASE
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
@@ -47,7 +47,7 @@ Confirming a request will create an executable order request for the customer wi
 ```
 
 <Note>
-  To create a sell order request, simiply set the `orderType` to `SELL`
+  To create a sell order request, simply set the `orderType` to `SELL`
 </Note>
 
 **Example Request Payload**
@@ -62,31 +62,27 @@ Confirming a request will create an executable order request for the customer wi
 
 ```json
 {
+  "message": "Success",
   "data": {
-    "ussdMessage": "Zamtel Message\n Thank you for purchasing 100ZK of Apple stock. You will receive a confirmation shortly.",
-    "ussdConfirm": {
-      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
-      "requestType": "GET"
-    }
-  },
-  "code": 200,
-  "message": "Success"
+    "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+    "currentState": "PURCHASE_SUCCESS",
+    "menu": {
+      "state": "PURCHASE_SUCCESS",
+      "text": "Zamtel Message\n Thank you for purchasing 100ZK of Apple stock. You will receive a confirmation shortly.",
+      "options": [
+        {
+          "key": "0",
+          "label": "Back to Home",
+          "nextState": "HOME"
+        }
+      ],
+      "isEndState": false
+    },
+    "ussdText": "Zamtel Message\n Thank you for purchasing 100ZK of Apple stock. You will receive a confirmation shortly.\n\n0. Back to Home",
+    "expiresAt": "2025-11-06T14:58:33.942Z"
+  }
 }
 ```
-
-#### Request payload
-
-| query    | Definition               | Required |
-| -------- | ------------------------ | -------- |
-| `amount` | The order request amount | `Yes`    |
-
-#### Query parameters
-
-| query        | Definition                                             | Required |
-| ------------ | ------------------------------------------------------ | -------- |
-| `customerId` | The unique customer identifer                          | `Yes`    |
-| `orderType`  | The type of order request. Either `PURCHASE` or `SELL` | `Yes`    |
-| `symbol`     | The stock symbol for the order request                 | `Yes`    |
 
 ### Confirm request view example
 

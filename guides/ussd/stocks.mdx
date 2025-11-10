@@ -11,49 +11,55 @@ The stocks menu view contains the available stocks that can be purchased.
 
 ### Accessing the stocks view
 
-<Tip>Make a `GET` request to [/stocks](/api-reference/ussd/stocks/get)</Tip>
+<Tip>
+This is the menu that is displayed once the customer has chosen to view stocks.
+From here the customer can choose to view an individual stock or search for a stock.
+</Tip>
 
-```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
-```
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Select Stock\n 1.Apple (AAPL)\n 2. Tesla (TSLA)\n 3. Microsoft (MSFT)\n 4. Nike (NKE) 5. Coca-Cola (KO) 6. View More Stocks 7. Search Stock Symbol 8. Back",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
-        "requestType": "GET"
-      },
-      ...
-      {
-        "option": 6,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&page=2",
-        "requestType": "GET"
-      },
-      {
-        "option": 7,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&searchMode=true",
-        "requestType": "GET"
-      },
-      {
-        "option": 8,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456",
-        "requestType": "GET"
-      }
-    ]
-  },
-  "code": 200,
-  "message": "Success"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+        "currentState": "STOCKS",
+        "menu": {
+            "state": "STOCKS",
+            "text": "Select Stock:",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "AAPL",
+                    "nextState": "SELECT_STOCK",
+                    "data": {
+                        "stockId": "cmhkp4jkw0005zxfok9m0kiwg",
+                        "symbol": "AAPL",
+                        "name": "Apple Inc."
+                    }
+                },
+                ...
+                {
+                    "key": "7",
+                    "label": "Next Page"
+                },
+                {
+                    "key": "8",
+                    "label": "Search Stock",
+                    "nextState": "SEARCH_STOCK"
+                },
+                {
+                    "key": "0",
+                    "label": "Back to Home",
+                    "nextState": "HOME"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Select Stock:\n\n1. AAPL\n2. AMZN\n3. GOOGL\n4. JPM\n5. META\n7. Next Page\n8. Search Stock\n0. Back to Home",
+        "expiresAt": "2025-11-06T14:58:33.942Z"
+    }
 }
 ```
 
@@ -66,9 +72,11 @@ The stocks menu view contains the available stocks that can be purchased.
 #### Paging stocks view
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&page=2
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
     ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=7'
 ```
 
 <Note>
@@ -76,51 +84,94 @@ The stocks menu view contains the available stocks that can be purchased.
   menu](#accessing-the-stocks-view)
 </Note>
 
-#### Enabling search mode
+#### Searching for a stock
 
 Returns a view that allows users to input a stock symbol.
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&searchMode=true
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
     ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=8'
 ```
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Search stock symbol\n 1. Back\n",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL",
-        "requestType": "GET"
-      }
-    ],
-    "ussdConfirm": {
-      "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol={symbol}",
-      "requestType": "GET"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+        "currentState": "SEARCH_STOCK",
+        "menu": {
+            "state": "SEARCH_STOCK",
+            "text": "Enter stock symbol or name:\n(e.g., AAPL or Apple)",
+            "options": [
+                {
+                    "key": "0",
+                    "label": "Cancel",
+                    "nextState": "STOCKS"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Enter stock symbol or name:\n(e.g., AAPL or Apple)\n\n0. Cancel",
+        "expiresAt": "2025-11-06T14:58:33.942Z"
     }
-  },
-  "code": 200,
-  "message": "Success"
 }
 ```
 
-<Tip>
-  When confirming the stock search, `{symbol}` in the url must be swapped with
-  the user input.
-</Tip>
+#### Processing stock search
+Pass the stock symbol or name to the `choice` parameter.
 
-#### Query parameters
+```bash
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=Tesla'
+```
 
-| query        | Definition                                                                       | Required |
-| ------------ | -------------------------------------------------------------------------------- | -------- |
-| `customerId` | The unique customer identifer                                                    | `Yes`    |
-| `page`       | The current set of viewable stocks. Default is `1`                               | `No`     |
-| `searchMode` | Returns a view that prompts the user to input a stock symbol. Default is `false` | `No`     |
+**Example Response**
+```json
+{
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_5310deea137a9cd999b02ae68a7bbbec",
+        "currentState": "STOCKS",
+        "menu": {
+            "state": "STOCKS",
+            "text": "Select Stock:",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "TSLA",
+                    "nextState": "SELECT_STOCK",
+                    "data": {
+                        "stockId": "cmhkp4km20009zxfoyv85kkij",
+                        "symbol": "TSLA",
+                        "name": "Tesla Inc."
+                    }
+                },
+                {
+                    "key": "8",
+                    "label": "Search Stock",
+                    "nextState": "SEARCH_STOCK"
+                },
+                {
+                    "key": "0",
+                    "label": "Back to Home",
+                    "nextState": "HOME"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Select Stock:\n\n1. TSLA\n8. Search Stock\n0. Back to Home",
+        "expiresAt": "2025-11-06T14:58:33.942Z"
+    }
+}
+```
 
 ### Stocks View Example
 

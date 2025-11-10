@@ -7,17 +7,17 @@ icon: "share-nodes"
 Whenever an event is triggered a `JSON` payload is sent to all urls that have subscribed to the event.
 This document will guide you on how to **create**, **update** and **get** webhook details.
 
-## Creating an Auth Token
+## Creating a Webhook
 
-To create an Auth Token:
+To create a webhook:  
 
 <Tip>
-  Make a `POST` request to [/auth](/api-reference/endpoint/webhooks/create)
+  Make a `POST` request to [/webhooks](/api-reference/endpoint/webhooks/create)
 </Tip>
 
 ```bash
   curl --request POST \
-    --url https://api.pipevest.com/v1/auth\
+    --url https://api.pipevest.com/v1/webhooks\
     --header 'Authorization: Bearer 123456' \
     --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
     --header 'Content-Length: 18' \
@@ -46,7 +46,7 @@ To test a webhook:
 
 ```bash
   curl --request POST \
-    --url https://api.pipevest.com/v1/auth/test\
+    --url https://api.pipevest.com/v1/webhooks/test\
     --header 'Authorization: Bearer 123456' \
     --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
     --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "X-Idempotency-Key" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \

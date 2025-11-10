@@ -25,7 +25,7 @@ The following diagram illustrates the authentication flow with Pipevest.
   <Step title="Access Token Request">
     ```bash
       curl --request POST \
-        --url https://api.pipevest.com/v1/auth \
+        --url https://api.pipevest.com/v1/oauth/token \
         --header 'Content-Digest: sha-512=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:' \
         --header 'Content-Length: 18' \
         --header 'Content-Type: application/x-www-form-urlencoded' \

@@ -22,48 +22,51 @@ The transctions menu view displays the list of transactions across all assets.
 ### Accessing the Transactions View
 
 <Tip>
-  Make a `GET` request to [/transactions](/api-reference/ussd/transactions/get)
+  Make this request from the portfolio menu view.
 </Tip>
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=3'
 ```
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Transaction History:\n Apple (AAPL Purchase 200 ZK 12/08/24\n… 1. View More Transactions\n 2.Back",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456&page=2",
-        "requestType": "GET"
-      },
-      {
-        "option": 2,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/home?customerId=123456",
-        "requestType": "GET"
-      }
-    ]
-  },
-  "code": 200,
-  "message": "Success"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_2231df057f1f8f5269f0a268249ac104",
+        "currentState": "TRANSACTION_HISTORY",
+        "menu": {
+            "state": "TRANSACTION_HISTORY",
+            "text": "Transaction History:\n\nBUY: AAPL\n0.0036 shares - ZK22.00\nDate: 11/6/2025\n\nBUY: AAPL\n0.093 shares - ZK560.00\nDate: 11/5/2025\n\nSELL: TSLA\n0.0141 shares - ZK139.29\nDate: 11/5/2025\n\nBUY: TSLA\n0.0563 shares - ZK560.00\nDate: 11/5/2025\n\n",
+            "options": [
+                {
+                    "key": "0",
+                    "label": "Back to Portfolio",
+                    "nextState": "MY_PORTFOLIO"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Transaction History:\n\nBUY: AAPL\n0.0036 shares - ZK22.00\nDate: 11/6/2025\n\nBUY: AAPL\n0.093 shares - ZK560.00\nDate: 11/5/2025\n\nSELL: TSLA\n0.0141 shares - ZK139.29\nDate: 11/5/2025\n\nBUY: TSLA\n0.0563 shares - ZK560.00\nDate: 11/5/2025\n\n\n\n0. Back to Portfolio",
+        "expiresAt": "2025-11-10T14:56:05.356Z"
+    }
 }
 ```
 
 #### Paging transactions view
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456&page=2
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
     ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=5'
 ```
 
 #### Individual asset transactions view
@@ -76,20 +79,29 @@ Providing the `assetId` will filter for the transactions associated with taht sp
     ...
 ```
 
-<Note>
-  The response for both [paging transactions](#paging-transactions-view) and
-  [individual asset transactions view](#individual-asset-transactions-view) will
-  be similar to the initial [transactions menu
-  view](#accessing-the-transactions-view)
-</Note>
-
-#### Query parameters
-
-| query        | Definition                                        | Required |
-| ------------ | ------------------------------------------------- | -------- |
-| `customerId` | The unique customer identifer                     | `Yes`    |
-| `page`       | The current set of viewable requests. Default `1` | `No`     |
-| `assetId`    | The unique asset identifer                        | `No`     |
+```json
+{
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_2231df057f1f8f5269f0a268249ac104",
+        "currentState": "STOCK_TRANSACTIONS",
+        "menu": {
+            "state": "STOCK_TRANSACTIONS",
+            "text": "Apple Inc. Transactions:\n\nTotal: 2 transactions\n\nBUY: 0.0036 shares\nZK22.00 | 11/6/2025\n\nBUY: 0.0930 shares\nZK560.00 | 11/5/2025\n\n",
+            "options": [
+                {
+                    "key": "0",
+                    "label": "Back to Asset Details",
+                    "nextState": "ASSET_DETAIL"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Apple Inc. Transactions:\n\nTotal: 2 transactions\n\nBUY: 0.0036 shares\nZK22.00 | 11/6/2025\n\nBUY: 0.0930 shares\nZK560.00 | 11/5/2025\n\n\n\n0. Back to Asset Details",
+        "expiresAt": "2025-11-10T14:56:05.356Z"
+    }
+}
+```
 
 ### Transactions View Example
 

@@ -15,45 +15,56 @@ The individual asset menu view allows users to general asset performance, more d
 ### Accessing the Assets View
 
 ```bash
-  curl --request GET \
-    --url https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456&assetId=123456
-    --header 'Authorization: Bearer 123456' \
-    --header 'Signature: sig1=:OTEyMjY4...A5NTNDMEQ=:' \
-    --header 'Signature-Input: sig1=("Authorization" "X-Client-Id" "@method" "@target-uri" "@path" "@query");keyid="staging-pipevest-ed25519";created=1732893484;expires=1732893584' \
-    --header 'X-Client-Id: 123456' \
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=1'
 ```
 
 **Example Response**
 
 ```json
 {
-  "data": {
-    "ussdMessage": "Apple (APPL)\n Own: 550ZK Yield: +5.50%\n 1.More Stock Details\n 2.Asset Transaction History\n 3. Sell Asset\n 4 .Back",
-    "ussdOptions": [
-      {
-        "option": 1,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/stocks?customerId=123456&symbol=AAPL&detailMode=true",
-        "requestType": "GET"
-      },
-      {
-        "option": 2,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/transactions?customerId=123456&assetId=123456",
-        "requestType": "GET"
-      },
-      {
-        "option": 3,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/requests?customerId=123456&symbol=AAPL&orderType=SELL",
-        "requestType": "POST"
-      },
-      {
-        "option": 4,
-        "requestUrl": "https://api.staging.pipevest.com/v1/ussd/assets?customerId=123456",
-        "requestType": "GET"
-      }
-    ]
-  },
-  "code": 200,
-  "message": "Success"
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_2231df057f1f8f5269f0a268249ac104",
+        "currentState": "ASSET_DETAIL",
+        "menu": {
+            "state": "ASSET_DETAIL",
+            "text": "Apple Inc. (AAPL)\n\nHoldings:\nShares: 0.0966\nAvg Price: ZK6024.84\n\nValue:\nTotal: ZK592.45\nInvested: ZK582.00\nChange: +ZK10.45 (+1.80%)\n\nWhat would you like to do?",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "Purchase More",
+                    "nextState": "BUY_STOCK"
+                },
+                {
+                    "key": "2",
+                    "label": "Sell Stock",
+                    "nextState": "SELL_STOCK"
+                },
+                {
+                    "key": "3",
+                    "label": "More Details",
+                    "nextState": "MORE_STOCK_DETAIL"
+                },
+                {
+                    "key": "4",
+                    "label": "Transactions",
+                    "nextState": "STOCK_TRANSACTIONS"
+                },
+                {
+                    "key": "0",
+                    "label": "Back to Assets",
+                    "nextState": "VIEW_ASSETS"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Apple Inc. (AAPL)\n\nHoldings:\nShares: 0.0966\nAvg Price: ZK6024.84\n\nValue:\nTotal: ZK592.45\nInvested: ZK582.00\nChange: +ZK10.45 (+1.80%)\n\nWhat would you like to do?\n\n1. Purchase More\n2. Sell Stock\n3. More Details\n4. Transactions\n0. Back to Assets",
+        "expiresAt": "2025-11-10T14:56:05.356Z"
+    }
 }
 ```
 
@@ -64,26 +75,81 @@ The individual asset menu view allows users to general asset performance, more d
   transactions](/guides/ussd/transactions#individual-asset-transactions-view)
 </Note>
 
-#### Enabling detail mode
-
-<Note>
-  See the guide on [enabling detail
-  mode](/guides/ussd/individual-stock#enabling-detail-mode)
-</Note>
 
 #### Creating a sell order request
 
-<Note>
-  See the guide on [order
-  requests](/guides/ussd/confirm-request#creating-an-order-request)
-</Note>
+```bash
+  curl --request POST \
+    --url https://api.staging.pipevest.com/v1/ussd/process
+    ...
+    --data 'sessionId=<session-id>'
+    --data 'choice=2'
+```
 
-#### Query parameters
-
-| query        | Definition                    | Required |
-| ------------ | ----------------------------- | -------- |
-| `customerId` | The unique customer identifer | `Yes`    |
-| `assetId`    | The unique asset identifer    | `Yes`    |
+```json
+{
+    "message": "USSD request processed successfully",
+    "data": {
+        "sessionId": "ussd_2231df057f1f8f5269f0a268249ac104",
+        "currentState": "SELL_STOCK",
+        "menu": {
+            "state": "SELL_STOCK",
+            "text": "Sell Apple Inc. (AAPL)\n\nYou own: 0.0966 shares\nCurrent value: ZK592.45\n\nSelect amount to sell:",
+            "options": [
+                {
+                    "key": "1",
+                    "label": "10% (0.0097 shares) - ZK59.24",
+                    "nextState": "SELL_CONFIRMATION",
+                    "data": {
+                        "sellQuantity": 0.009660000000000002,
+                        "sellValue": 59.244780000000006
+                    }
+                },
+                {
+                    "key": "2",
+                    "label": "25% (0.0242 shares) - ZK148.11",
+                    "nextState": "SELL_CONFIRMATION",
+                    "data": {
+                        "sellQuantity": 0.02415,
+                        "sellValue": 148.11195
+                    }
+                },
+                {
+                    "key": "3",
+                    "label": "50% (0.0483 shares) - ZK296.22",
+                    "nextState": "SELL_CONFIRMATION",
+                    "data": {
+                        "sellQuantity": 0.0483,
+                        "sellValue": 296.2239
+                    }
+                },
+                {
+                    "key": "4",
+                    "label": "100% (All shares) - ZK592.45",
+                    "nextState": "SELL_CONFIRMATION",
+                    "data": {
+                        "sellQuantity": 0.0966,
+                        "sellValue": 592.4478
+                    }
+                },
+                {
+                    "key": "5",
+                    "label": "Enter custom amount",
+                    "nextState": "ENTER_CUSTOM_SELL_AMOUNT"
+                },
+                {
+                    "key": "0",
+                    "label": "Back",
+                    "nextState": "ASSET_DETAIL"
+                }
+            ],
+            "isEndState": false
+        },
+        "ussdText": "Sell Apple Inc. (AAPL)\n\nYou own: 0.0966 shares\nCurrent value: ZK592.45\n\nSelect amount to sell:\n\n1. 10% (0.0097 shares) - ZK59.24\n2. 25% (0.0242 shares) - ZK148.11\n3. 50% (0.0483 shares) - ZK296.22\n4. 100% (All shares) - ZK592.45\n5. Enter custom amount\n0. Back",
+        "expiresAt": "2025-11-10T14:56:05.356Z"
+    }
+}
+```
 
 ### Assets View Example
 
